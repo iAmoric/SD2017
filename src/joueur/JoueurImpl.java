@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class JoueurImpl implements Joueur {
     private Producteur[] producteurs;//liste des producteurs
+    private Joueur[] joueurs;//liste des joueurs
+    private int id;//indice du joueur dans le tableau
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
     private boolean working;
@@ -28,5 +30,25 @@ public class JoueurImpl implements Joueur {
 
     public boolean observe(Joueur j) {
         return false;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setJoueurs(Joueur[] joueurs) {
+        this.joueurs = joueurs;
+    }
+
+    public void setProducteurs(Producteur[] producteurs) {
+        this.producteurs = producteurs;
+    }
+
+    public void setRessources(Map<Integer, Integer> ressources) {
+        this.ressources = ressources;
+    }
+
+    public void setObjectifs(Map<Integer, Integer> objectifs) {
+        this.objectifs = objectifs;
     }
 }
