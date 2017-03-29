@@ -46,7 +46,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      * @param n: le nombre d'exemplaire demandé
      * @return le nombre de ressource obtenue ou -1 si erreur
      */
-    public synchronized int getRessource(int id,int n){
+    public synchronized int getRessource(int id,int n)throws RemoteException{
         if(n<0)return -1;
 
         int result = 0;

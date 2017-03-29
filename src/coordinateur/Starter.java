@@ -22,6 +22,8 @@ public class Starter {
     private Map<Integer,Integer> objectifs;
     private Joueur[] joueurs;
     private Producteur[] producteurs;
+    private boolean haveOptionsSUM;//indique qu'il faut atteindre le nombre total X de ressource
+    private boolean haveOptionALL;//indique que le même nombre de unité doit être atteint pour toutes les ressources
 
 
 
