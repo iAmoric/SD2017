@@ -6,6 +6,4 @@ Joueurs
 0
 0
 Producteurs
-1
-1
-1
+rmi://localhost:5555/ProducteurA or

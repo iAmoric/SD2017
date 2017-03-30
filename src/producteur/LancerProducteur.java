@@ -1,5 +1,9 @@
 package producteur;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+
 /**
  * Created by jpabegg on 29/03/17.
  */
@@ -16,7 +20,15 @@ public class LancerProducteur {
      * rmiregistry <No port> & <-- dans le dossier avec les stubs ( .class)
      */
     public static void main(String[] args){
-
+        int portRMI = 5555;
+        try
+        {
+            Producteur objLocal = new ProducteurImpl();
+            Naming.rebind( "rmi://localhost:"+portRMI+"/ProducteurA" ,objLocal) ;
+            System.out.println("Serveur pret") ;
+        }
+        catch (RemoteException re) { System.out.println(re) ; }
+        catch (MalformedURLException e) { System.out.println(e) ; }
 
     }
 }

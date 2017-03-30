@@ -8,5 +8,6 @@ import java.rmi.Remote;
 public interface  Joueur extends Remote{
     int getRessources(int idRessource);
     boolean observe(Joueur j);
-
+    void setId(int id);
+    boolean ajouteJoueurs(String[] rmi);
 }

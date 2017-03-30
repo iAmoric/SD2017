@@ -15,6 +15,10 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     private int k;
     private ThreadRessource thread;
 
+    public ProducteurImpl() throws RemoteException{
+        super();
+    }
+
     public ProducteurImpl(Map<Integer,Integer> ressourceDispo, boolean isRessourceEpuisable, int k)
             throws RemoteException {
         super();

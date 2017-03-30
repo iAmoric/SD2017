@@ -21,6 +21,7 @@ public class Starter {
     private Map<String,Integer> ressources;//associé un ID à une ressource
     private Map<Integer,Integer> objectifs;
     private Joueur[] joueurs;
+    private String[] connectionRMI;
     private Producteur[] producteurs;
     private boolean haveOptionsSUM;//indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL;//indique que le même nombre de unité doit être atteint pour toutes les ressources
@@ -123,10 +124,13 @@ public class Starter {
      */
     private void parseProducteur(BufferedReader reader) throws IOException {
         String ligne;
+        String[] elements;
         List<Producteur> listProducteur = new ArrayList<Producteur>();
         while ( (ligne = reader.readLine()) != null){
             //TODO se connecter en RMI pour récupérer les Producteurs
-           listProducteur.add(null);
+            elements = ligne.split(" ");
+            listProducteur.add(null);
+            //TODO découposer la ligne et indiquer au producteur les ressources qu'il produit
         }
         if(listProducteur.size() != 0){
             producteurs = new Producteur[listProducteur.size()];
@@ -135,6 +139,22 @@ public class Starter {
             }
         }
 
+    }
+
+    /**
+     * Initialise les infos disponible chez les joueurs
+     * -son id
+     * -les autres joueurs
+     * -l'objectif
+     * -les producteurs
+     * -le coordinateur de fin de partie
+     * -les règles
+     */
+    public void initJoueurs(){
+        for(int i = 0;i<joueurs.length;i++){
+            joueurs[i].setId(i);//Id du joueur
+
+        }
     }
 
     /**
