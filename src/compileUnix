@@ -1,0 +1,5 @@
+cd producteur
+rm *.class
+javac *.java
+cd ..
+rmic producteur.ProducteurImpl
