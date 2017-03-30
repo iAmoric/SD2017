@@ -21,8 +21,9 @@ public class Starter {
     private Map<String,Integer> ressources;//associé un ID à une ressource
     private Map<Integer,Integer> objectifs;
     private Joueur[] joueurs;
-    private String[] connectionRMI;
+    private String[] connectionRMIJoueur;
     private Producteur[] producteurs;
+    private String[] connectionRMIProducteur;
     private boolean haveOptionsSUM;//indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL;//indique que le même nombre de unité doit être atteint pour toutes les ressources
 
@@ -101,18 +102,22 @@ public class Starter {
     private void parseJoueur(BufferedReader reader) throws IOException {
         String ligne;
         List<Joueur> listJoueur = new ArrayList<Joueur>();
+        List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Producteurs")){
                 break;
             }else{
                 //TODO se connecter en RMI pour récupérer le joueur
                 listJoueur.add(new JoueurImpl());
+                listString.add(null);
             }
         }
         if(listJoueur.size() != 0){
             joueurs = new Joueur[listJoueur.size()];
+            connectionRMIJoueur = new String[listString.size()];
             for(int i = 0;i < joueurs.length;i++){
                 joueurs[i] = listJoueur.get(i);
+                connectionRMIJoueur[i] = listString.get(i);
             }
         }
         parseProducteur(reader);
@@ -126,16 +131,20 @@ public class Starter {
         String ligne;
         String[] elements;
         List<Producteur> listProducteur = new ArrayList<Producteur>();
+        List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
             //TODO se connecter en RMI pour récupérer les Producteurs
             elements = ligne.split(" ");
             listProducteur.add(null);
+            listString.add(null);
             //TODO découposer la ligne et indiquer au producteur les ressources qu'il produit
         }
         if(listProducteur.size() != 0){
             producteurs = new Producteur[listProducteur.size()];
+            connectionRMIProducteur = new String[listString.size()];
             for(int i = 0;i < producteurs.length;i++){
                 producteurs[i] = listProducteur.get(i);
+                connectionRMIProducteur[i] = listString.get(i);
             }
         }
 
@@ -152,8 +161,7 @@ public class Starter {
      */
     public void initJoueurs(){
         for(int i = 0;i<joueurs.length;i++){
-            joueurs[i].setId(i);//Id du joueur
-
+            joueurs[i].setId(i);//Id du joueurs
         }
     }
 
