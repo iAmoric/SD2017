@@ -56,7 +56,7 @@ public class Starter {
         int i = 0;
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Objectif")){
-                break;
+                parseObjectifs(reader);
             }else{
                 ressources.put(ligne,i);
                 i++;
@@ -65,7 +65,7 @@ public class Starter {
         if(i == 0){
             //TODO erreur il y a aucune ressource dans le fichier init
         }
-        parseObjectifs(reader);
+
 
     }
 
@@ -81,17 +81,18 @@ public class Starter {
         i = 0;
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Joueurs")){
-                break;
+                parseJoueur(reader);
             }else{
                 objectif = Integer.parseInt(ligne);
                 objectifs.put(i,objectif);
                 i++;
             }
         }
+        //On a lu le fichier en entier à ce moment
         if(ressources.size() != objectifs.size()){
             //TODO erreur sauf si il y a des options
         }
-        parseJoueur(reader);
+
     }
 
     /**
@@ -105,13 +106,14 @@ public class Starter {
         List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Producteurs")){
-                break;
+                parseProducteur(reader);
             }else{
                 //TODO se connecter en RMI pour récupérer le joueur
                 listJoueur.add(new JoueurImpl());
                 listString.add(null);
             }
         }
+        //On a lu le fichier en entier à ce moment
         if(listJoueur.size() != 0){
             joueurs = new Joueur[listJoueur.size()];
             connectionRMIJoueur = new String[listString.size()];
@@ -119,8 +121,10 @@ public class Starter {
                 joueurs[i] = listJoueur.get(i);
                 connectionRMIJoueur[i] = listString.get(i);
             }
+
+
         }
-        parseProducteur(reader);
+
     }
 
     /**
@@ -133,12 +137,16 @@ public class Starter {
         List<Producteur> listProducteur = new ArrayList<Producteur>();
         List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
+            if(ligne.equals("Regles")){
+                //TODO lire les règles
+            }
             //TODO se connecter en RMI pour récupérer les Producteurs
             elements = ligne.split(" ");
             listProducteur.add(null);
             listString.add(null);
             //TODO découposer la ligne et indiquer au producteur les ressources qu'il produit
         }
+        //On a lu le fichier en entier à ce moment
         if(listProducteur.size() != 0){
             producteurs = new Producteur[listProducteur.size()];
             connectionRMIProducteur = new String[listString.size()];
@@ -188,6 +196,7 @@ public class Starter {
         }
         File f = new File(args[0]);*/
         try {
+            //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un producteur
             Starter s = new Starter("ressource/init");
             s.info(System.out);
         } catch (IOException e) {
