@@ -9,4 +9,6 @@ import java.rmi.RemoteException;
 public interface Producteur extends Remote
 {
    int getRessource(int id,int n) throws RemoteException;
+   boolean isReady();
+
 }

@@ -80,6 +80,13 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         }
     }
 
+    /**
+     * @return faux tant que le producteur n'est pas pret
+     */
+    public boolean isReady(){
+        return false;
+    }
+
 
 
     public void startProduction(){
