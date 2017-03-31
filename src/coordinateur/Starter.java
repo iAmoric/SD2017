@@ -3,7 +3,6 @@ package coordinateur;
 import joueur.Joueur;
 import joueur.JoueurImpl;
 import producteur.Producteur;
-import producteur.ProducteurImpl;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -121,8 +120,6 @@ public class Starter {
                 joueurs[i] = listJoueur.get(i);
                 connectionRMIJoueur[i] = listString.get(i);
             }
-
-
         }
 
     }
