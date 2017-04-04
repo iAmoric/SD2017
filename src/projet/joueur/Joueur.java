@@ -1,4 +1,4 @@
-package joueur;
+package projet.joueur;
 
 import java.rmi.Remote;
 

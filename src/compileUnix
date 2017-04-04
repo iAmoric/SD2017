@@ -1,5 +1,5 @@
-cd producteur
+cd projet.producteur
 rm *.class
 javac *.java
 cd ..
-rmic producteur.ProducteurImpl
+rmic projet.producteur.ProducteurImpl

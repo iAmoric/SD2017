@@ -1,4 +1,4 @@
-package producteur;
+package projet.producteur;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

@@ -1,8 +1,8 @@
-package coordinateur;
+package projet.coordinateur;
 
-import joueur.Joueur;
-import joueur.JoueurImpl;
-import producteur.Producteur;
+import projet.joueur.Joueur;
+import projet.joueur.JoueurImpl;
+import projet.producteur.Producteur;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class Starter {
             if(ligne.equals("Producteurs")){
                 parseProducteur(reader);
             }else{
-                //TODO se connecter en RMI pour récupérer le joueur
+                //TODO se connecter en RMI pour récupérer le projet.joueur
                 listJoueur.add(new JoueurImpl());
                 listString.add(null);
             }
@@ -141,7 +141,7 @@ public class Starter {
             elements = ligne.split(" ");
             listProducteur.add(null);
             listString.add(null);
-            //TODO découposer la ligne et indiquer au producteur les ressources qu'il produit
+            //TODO découposer la ligne et indiquer au projet.producteur les ressources qu'il produit
         }
         //On a lu le fichier en entier à ce moment
         if(listProducteur.size() != 0){
@@ -161,7 +161,7 @@ public class Starter {
      * -les autres joueurs
      * -l'objectif
      * -les producteurs
-     * -le coordinateur de fin de partie
+     * -le projet.coordinateur de fin de partie
      * -les règles
      */
     public void initJoueurs(){
@@ -193,7 +193,7 @@ public class Starter {
         }
         File f = new File(args[0]);*/
         try {
-            //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un producteur
+            //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un projet.producteur
             Starter s = new Starter("ressource/init");
             s.info(System.out);
         } catch (IOException e) {

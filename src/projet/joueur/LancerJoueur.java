@@ -1,7 +1,4 @@
-package joueur;
-
-import producteur.Producteur;
-import producteur.ProducteurImpl;
+package projet.joueur;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

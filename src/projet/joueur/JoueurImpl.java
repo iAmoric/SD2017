@@ -1,6 +1,6 @@
-package joueur;
+package projet.joueur;
 
-import producteur.Producteur;
+import projet.producteur.Producteur;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class JoueurImpl implements Joueur {
     private Producteur[] producteurs;//liste des producteurs
     private Joueur[] joueurs;//liste des joueurs
-    private int id;//indice du joueur dans le tableau
+    private int id;//indice du projet.joueur dans le tableau
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
     private boolean working;
