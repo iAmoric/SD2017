@@ -23,8 +23,8 @@ public class Starter {
     private String[] connectionRMIJoueur;
     private Producteur[] producteurs;
     private String[] connectionRMIProducteur;
-    private boolean haveOptionsSUM;//indique qu'il faut atteindre le nombre total X de ressource
-    private boolean haveOptionALL;//indique que le même nombre de unité doit être atteint pour toutes les ressources
+    private boolean haveOptionsSUM; //indique qu'il faut atteindre le nombre total X de ressource
+    private boolean haveOptionALL; //indique que le même nombre de unité doit être atteint pour toutes les ressources
 
 
 
