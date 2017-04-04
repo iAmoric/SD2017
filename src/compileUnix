@@ -1,5 +1,4 @@
-cd projet.producteur
-rm *.class
-javac *.java
-cd ..
+pkill rmiregistry
+javac projet/*/*.java
 rmic projet.producteur.ProducteurImpl
+rmiregistry 5555
