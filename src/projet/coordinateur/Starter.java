@@ -23,9 +23,9 @@ public class Starter {
     private String[] connectionRMIJoueur;
     private Producteur[] producteurs;
     private String[] connectionRMIProducteur;
-    private boolean haveOptionsSUM = false; //indique qu'il faut atteindre le nombre total X de ressource
+    private boolean haveOptionSUM = false; //indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL = false; //indique que le même nombre de unité doit être atteint pour toutes les ressources
-
+    private int sommeObjectif;
 
 
     public Starter(File file) throws IOException {
@@ -72,25 +72,6 @@ public class Starter {
     }
 
     /**
-     * Set le type de l'objectif :
-     * All : même nombre de unité doit être atteint pour toutes les ressources
-     * Sum : atteindre le nombre total X de ressources
-     */
-    private void parseTypeObjectif(BufferedReader reader) throws IOException {
-        String ligne;
-        int i = 0;
-        ligne = reader.readLine();
-        if (ligne.equals("All")) {
-            haveOptionALL = true;
-        }
-        else if (ligne.equals("Sum")) {
-            haveOptionsSUM = true;
-        }
-        parseObjectifs(reader);
-    }
-
-
-    /**
      * Initialise l'objectifs de la partie. Pour le moment il faut autant de ligne que de ressource
      *
      * Set le type de l'objectif :
@@ -104,38 +85,49 @@ public class Starter {
         int objectif;
         i = 0;
 
-
-
-            while ((ligne = reader.readLine()) != null){
-                if(ligne.equals("Joueurs")){
-                    parseJoueur(reader);
-                }else{
-                    if (ligne.equals("All")) {
-                        haveOptionALL = true;
-                        System.out.println("All : " + haveOptionALL);
-                    }
-                    else if (ligne.equals("Sum")) {
-                        haveOptionsSUM = true;
-                        System.out.println("Sum : " + haveOptionsSUM);
-                    }
-                    System.out.println("Objectif : " + ligne);
+        while ((ligne = reader.readLine()) != null){
+            if(ligne.equals("Joueurs")){
+                parseJoueur(reader);
+            }else{
+                if (ligne.equals("All")) {
+                    haveOptionALL = true;
+                    System.out.println("All : " + haveOptionALL);
+                }
+                else if (ligne.equals("Sum")) {
+                    haveOptionSUM = true;
+                    System.out.println("Sum : " + haveOptionSUM);
+                }
+                else {
                     objectif = Integer.parseInt(ligne);
+                    if (haveOptionSUM){
+                        sommeObjectif = objectif;
+                    }
+                    if (haveOptionALL) {
+                        for (int k = 0; k < ressources.size(); k++)
+                            objectifs.put(k, objectif);
+                    }
                     objectifs.put(i,objectif);
                     i++;
-                    if (i > 1 && (haveOptionsSUM || haveOptionALL)) {
-                        //Si une des options est set a true, il ne doit y avoir qu'un objectif
-                        //TODO erreur -> trop d'objectifs
-                        System.err.println("Erreur trop d'objectif");
-                    }
+                }
+                if (i > 1 && (haveOptionSUM || haveOptionALL)) {
+                    //Si une des options est set a true, il ne doit y avoir qu'un objectif
+                    //TODO erreur -> trop d'objectifs
+                    System.err.println("Erreur trop d'objectif");
                 }
             }
+        }
 
 
         //On a lu le fichier en entier à ce moment
-        if((ressources.size() != objectifs.size()) && (!haveOptionALL && !haveOptionsSUM)) {
+        if((ressources.size() != objectifs.size()) && (!haveOptionALL && !haveOptionSUM)) {
             System.err.println("Erreur nb ressource != nb objectif");
             //Si il n'y a pas d'objectif, nb ressource = nb objectif
             //TODO erreur -> pb ressources/objectifs
+        }
+
+        if (i == 0){
+            //TODO erreur -> pas d'objectif
+            System.err.println("Erreur pas d'objectif");
         }
 
     }
