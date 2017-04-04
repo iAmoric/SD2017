@@ -1,5 +1,6 @@
 package projet.coordinateur;
 
+import projet.exceptions.tooManyGoalsException;
 import projet.joueur.Joueur;
 import projet.joueur.JoueurImpl;
 import projet.producteur.Producteur;
@@ -55,7 +56,14 @@ public class Starter {
         int i = 0;
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Objectif")){
-                parseObjectifs(reader);
+                try {
+                    parseObjectifs(reader);
+                }
+                catch (tooManyGoalsException e){
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+
                 //parseTypeObjectif(reader);
             }else{
                 ressources.put(ligne,i);
@@ -79,7 +87,7 @@ public class Starter {
      * Sum : atteindre le nombre total X de ressources
      * @param reader
      */
-    private void parseObjectifs(BufferedReader reader) throws IOException {
+    private void parseObjectifs(BufferedReader reader) throws IOException, tooManyGoalsException {
         String ligne;
         int i;
         int objectif;
@@ -112,7 +120,7 @@ public class Starter {
                 if (i > 1 && (haveOptionSUM || haveOptionALL)) {
                     //Si une des options est set a true, il ne doit y avoir qu'un objectif
                     //TODO erreur -> trop d'objectifs
-                    System.err.println("Erreur trop d'objectif");
+                    throw new tooManyGoalsException();
                 }
             }
         }
@@ -129,6 +137,7 @@ public class Starter {
             //TODO erreur -> pas d'objectif
             System.err.println("Erreur pas d'objectif");
         }
+
 
     }
 
@@ -214,8 +223,10 @@ public class Starter {
      */
     public void info(PrintStream os){
         os.println("Ressource:");
+        Integer k = 0;
         for(String s: ressources.keySet()){
-            os.println(s);
+            os.println(s + objectifs.get(k));
+            k++;
         }
         os.println("\nJoueurs");
         for(Joueur j: joueurs){
@@ -223,6 +234,7 @@ public class Starter {
         }
         os.println("\nProducteurs");
     }
+
 
     public static void main(String[] args){
         /*if(args.length != 1){
@@ -233,7 +245,7 @@ public class Starter {
         try {
             //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un projet.producteur
             Starter s = new Starter("ressource/init");
-            //s.info(System.out);
+            s.info(System.out);
         } catch (IOException e) {
             e.printStackTrace();
         }
