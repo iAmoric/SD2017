@@ -1,5 +1,6 @@
 package projet.coordinateur;
 
+import projet.exceptions.*;
 import projet.exceptions.tooManyGoalsException;
 import projet.joueur.Joueur;
 import projet.joueur.JoueurImpl;
@@ -29,7 +30,7 @@ public class Starter {
     private int sommeObjectif;
 
 
-    public Starter(File file) throws IOException {
+    public Starter(File file) throws IOException, PException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String ligne;
         //Parsing du fichier d'init
@@ -42,7 +43,7 @@ public class Starter {
         }
     }
 
-    public Starter(String s) throws IOException {
+    public Starter(String s) throws IOException, PException {
         this(new File(s));
     }
 
@@ -51,19 +52,12 @@ public class Starter {
      * @param reader
      * @throws IOException
      */
-    private void parseRessource(BufferedReader reader) throws IOException {
+    private void parseRessource(BufferedReader reader) throws IOException, PException {
         String ligne;
         int i = 0;
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Objectif")){
-                try {
-                    parseObjectifs(reader);
-                }
-                catch (tooManyGoalsException e){
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-
+                parseObjectifs(reader);
                 //parseTypeObjectif(reader);
             }else{
                 ressources.put(ligne,i);
@@ -87,7 +81,7 @@ public class Starter {
      * Sum : atteindre le nombre total X de ressources
      * @param reader
      */
-    private void parseObjectifs(BufferedReader reader) throws IOException, tooManyGoalsException {
+    private void parseObjectifs(BufferedReader reader) throws IOException, PException {
         String ligne;
         int i;
         int objectif;
@@ -95,7 +89,12 @@ public class Starter {
 
         while ((ligne = reader.readLine()) != null){
             if(ligne.equals("Joueurs")){
-                parseJoueur(reader);
+                if (i == 0){
+                    throw new noGoalException();
+                }
+                else {
+                    parseJoueur(reader);
+                }
             }else{
                 if (ligne.equals("All")) {
                     haveOptionALL = true;
@@ -133,10 +132,7 @@ public class Starter {
             //TODO erreur -> pb ressources/objectifs
         }
 
-        if (i == 0){
-            //TODO erreur -> pas d'objectif
-            System.err.println("Erreur pas d'objectif");
-        }
+
 
 
     }
@@ -248,6 +244,8 @@ public class Starter {
             s.info(System.out);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (PException e) {
+            System.err.println(e.getMessage());
         }
 
     }
