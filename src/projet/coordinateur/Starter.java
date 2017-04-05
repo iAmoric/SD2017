@@ -58,16 +58,13 @@ public class Starter {
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Objectif")){
                 parseObjectifs(reader);
-                //parseTypeObjectif(reader);
             }else{
                 ressources.put(ligne,i);
-                System.out.println("Add resource : " + ligne);
                 i++;
             }
         }
         if(i == 0){
-            System.err.println("Erreur aucune ressource");
-            //TODO erreur il y a aucune ressource dans le fichier init
+            throw new noResourceException();
         }
 
 
@@ -118,7 +115,6 @@ public class Starter {
                 }
                 if (i > 1 && (haveOptionSUM || haveOptionALL)) {
                     //Si une des options est set a true, il ne doit y avoir qu'un objectif
-                    //TODO erreur -> trop d'objectifs
                     throw new tooManyGoalsException();
                 }
             }
@@ -127,9 +123,8 @@ public class Starter {
 
         //On a lu le fichier en entier à ce moment
         if((ressources.size() != objectifs.size()) && (!haveOptionALL && !haveOptionSUM)) {
-            System.err.println("Erreur nb ressource != nb objectif");
             //Si il n'y a pas d'objectif, nb ressource = nb objectif
-            //TODO erreur -> pb ressources/objectifs
+            throw new resourcesGoalsException(ressources.size(), objectifs.size());
         }
 
 
@@ -221,7 +216,7 @@ public class Starter {
         os.println("Ressource:");
         Integer k = 0;
         for(String s: ressources.keySet()){
-            os.println(s + objectifs.get(k));
+            os.println(s + ":" + objectifs.get(k));
             k++;
         }
         os.println("\nJoueurs");
@@ -242,10 +237,8 @@ public class Starter {
             //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un projet.producteur
             Starter s = new Starter("ressource/init");
             s.info(System.out);
-        } catch (IOException e) {
+        } catch (IOException | PException e) {
             e.printStackTrace();
-        } catch (PException e) {
-            System.err.println(e.getMessage());
         }
 
     }
