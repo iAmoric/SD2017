@@ -10,5 +10,6 @@ public interface Producteur extends Remote
 {
    int getRessource(int id,int n) throws RemoteException;
    boolean isReady() throws RemoteException;
+   void init() throws RemoteException;
 
 }

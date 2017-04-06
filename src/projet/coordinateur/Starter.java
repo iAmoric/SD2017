@@ -7,6 +7,8 @@ import projet.joueur.JoueurImpl;
 import projet.producteur.Producteur;
 
 import java.io.*;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +139,7 @@ public class Starter {
      * @param reader
      * @throws IOException
      */
-    private void parseJoueur(BufferedReader reader) throws IOException {
+    private void parseJoueur(BufferedReader reader) throws IOException, RMIExecption {
         String ligne;
         List<Joueur> listJoueur = new ArrayList<Joueur>();
         List<String> listString = new ArrayList<String>();
@@ -166,19 +168,38 @@ public class Starter {
      *
      * @param reader
      */
-    private void parseProducteur(BufferedReader reader) throws IOException {
+    private void parseProducteur(BufferedReader reader) throws IOException, RMIExecption {
+        int idRessource;
+        int valInitiale;
         String ligne;
         String[] elements;
+        Producteur producteur;
+        Map<Integer,Integer> mapProducteur;//Les ressources de base du producteur
         List<Producteur> listProducteur = new ArrayList<Producteur>();
         List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Regles")){
                 //TODO lire les règles
             }
-            //TODO se connecter en RMI pour récupérer les Producteurs
             elements = ligne.split(" ");
-            listProducteur.add(null);
-            listString.add(null);
+            try {
+                //connection au producteur
+                producteur = (Producteur) Naming.lookup(elements[0]) ;
+                //ajout du producteur dans la liste de producteur
+                listProducteur.add(producteur);
+                //ajout de l'adresse du producteur dans la liste d'adresse
+                listString.add(elements[0]);
+                mapProducteur = new HashMap<Integer, Integer>();
+                for (int i = 1;i<elements.length;i = i + 2){
+                    idRessource = findIdRessource(elements[i]);
+                    mapProducteur.put(idRessource,Integer.parseInt(elements[i+1]));
+                }
+                //Pour tester
+                producteur.init();
+            } catch (NotBoundException e) {
+                throw new RMIExecption(elements[0]);
+            }
+
             //TODO découposer la ligne et indiquer au projet.producteur les ressources qu'il produit
         }
         //On a lu le fichier en entier à ce moment
@@ -226,6 +247,20 @@ public class Starter {
         os.println("\nProducteurs");
     }
 
+    /**
+     * Trouve le numéro associé au nom d'un resource
+     * @param ressource: le nom d'une ressource
+     * @return l'id de cette ressource dans le système
+     */
+    private int findIdRessource(String ressource){
+        for (String s:ressources.keySet()){
+            if (s.equals(ressource)){
+                return ressources.get(s);
+            }
+        }
+
+        return -1;
+    }
 
     public static void main(String[] args){
         /*if(args.length != 1){

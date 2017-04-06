@@ -11,6 +11,7 @@ import java.util.Set;
  */
 public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     private Map<Integer,Integer> ressourceDispo;// <idRessource,exemplaire disponible>
+    private boolean isReady = false;
     private boolean isRessourceEpuisable;
     private int k;
     private ThreadRessource thread;
@@ -83,10 +84,13 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     /**
      * @return faux tant que le projet.producteur n'est pas pret
      */
-    public boolean isReady(){
-        return false;
+    public boolean isReady() throws RemoteException{
+        return isReady;
     }
 
+    public void init() throws RemoteException{
+        isReady = true;
+    }
 
 
     public void startProduction(){

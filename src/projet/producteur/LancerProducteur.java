@@ -34,7 +34,8 @@ public class LancerProducteur {
                     e.printStackTrace();
                 }
             }
-            impl.startProduction();
+            System.out.println("Coucou");
+            //impl.startProduction();
 
         }
         catch (RemoteException re) { System.out.println(re) ; }
