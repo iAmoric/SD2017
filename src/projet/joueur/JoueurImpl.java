@@ -24,6 +24,8 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
     private boolean isReady;
+    private boolean doSum = false;
+    private int sumObjectif;
 
     public JoueurImpl() throws RemoteException {
         super();
@@ -52,6 +54,13 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+
+    public void setObjectifs(Map<Integer, Integer> objectif, boolean doSum, int sum) throws RemoteException {
+        objectifs = new HashMap<Integer, Integer>(objectif);
+        this.doSum = doSum;
+        sumObjectif = sum;
     }
 
     /**
@@ -113,6 +122,14 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         os.println("Ressources:");
         for (int i :mapRessourceProducteurs.keySet()){
             os.println("id/nbProducteur "+i+"/"+mapRessourceProducteurs.get(i).size());
+        }
+
+        os.println("Objectifs");
+        if(doSum){
+            os.println(sumObjectif+" ressources au total");
+        }
+        for(int i:objectifs.keySet()){
+            os.println("id/nombre "+i+"/"+objectifs.get(i));
         }
     }
 

@@ -85,7 +85,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     }
 
     /**
-     * @return faux tant que le projet.producteur n'est pas pret
+     * @return faux tant que le producteur n'est pas pret
      */
     public boolean isReady() throws RemoteException{
         return isReady;

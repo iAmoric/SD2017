@@ -30,7 +30,7 @@ public class Starter {
     private String[] connectionRMIProducteur;
     private boolean haveOptionSUM = false; //indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL = false; //indique que le même nombre de unité doit être atteint pour toutes les ressources
-    private int sommeObjectif;
+    private int sommeObjectif = -1;
 
 
     public Starter(File file) throws IOException, PException {
@@ -246,6 +246,7 @@ public class Starter {
             } else {
                 System.err.println("Joueur " + i + ": erreur pour se connecter aux autres joueurs");
             }
+            joueurs[i].setObjectifs(objectifs,haveOptionSUM,sommeObjectif);
         }
     }
 
