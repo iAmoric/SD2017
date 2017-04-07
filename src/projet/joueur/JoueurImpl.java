@@ -65,8 +65,26 @@ public class JoueurImpl implements Joueur {
         return true;
     }
 
-    public void setJoueurs(Joueur[] joueurs) {
-        this.joueurs = joueurs;
+    public boolean setJoueurs(String[] joueursString) throws RemoteException {
+        joueurs = new Joueur[joueursString.length-1];
+        int j = 0;
+        for (int i = 0;i<joueursString.length;i++){
+            if(i != id){
+                try {
+                    joueurs[j] = (Joueur) Naming.lookup(joueursString[i]);
+                    j++;
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }finally {
+                    return false;
+                }
+
+            }
+        }
+        return true;
+
     }
 
     public void setProducteurs(Producteur[] producteurs) {

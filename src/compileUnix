@@ -1,4 +1,5 @@
 pkill rmiregistry
 javac projet/*/*.java
 rmic projet.producteur.ProducteurImpl
+rmic projet.joueur.JoueurImpl
 rmiregistry 5555 &

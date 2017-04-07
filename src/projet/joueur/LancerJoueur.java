@@ -15,8 +15,11 @@ public class LancerJoueur {
             //TODO faire des arguments: hostStarter portStarter
             JoueurImpl impl = new JoueurImpl();
             Joueur objLocal = (Joueur) impl;
+            JoueurImpl implB = new JoueurImpl();
             Naming.rebind( "rmi://localhost:"+portRMI+"/JoueurA" ,objLocal) ;
-            System.out.println("Joueur  A pret") ;
+            objLocal = (Joueur)impl;
+            Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocal);
+            System.out.println("Joueur  A et B pret") ;
             //s'enregistrer chez Starter
 
             //Tant que le Starter ne l'a pas initialisé

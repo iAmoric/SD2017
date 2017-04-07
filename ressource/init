@@ -5,7 +5,7 @@ Objectif
 300
 500
 Joueurs
-0
-0
+rmi://localhost:5555/JoueurA
+rmi://localhost:5555/JoueurB
 Producteurs
 rmi://localhost:5555/ProducteurA or 50

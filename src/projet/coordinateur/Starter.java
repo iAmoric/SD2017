@@ -9,6 +9,7 @@ import projet.producteur.Producteur;
 import java.io.*;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -148,8 +149,13 @@ public class Starter {
                 parseProducteur(reader);
             }else{
                 //TODO se connecter en RMI pour récupérer le projet.joueur
-                listJoueur.add(new JoueurImpl());
-                listString.add(null);
+
+                try {
+                    listJoueur.add((Joueur)Naming.lookup(ligne));
+                } catch (NotBoundException e) {
+                    throw new RMIExecption(ligne);
+                }
+                listString.add(ligne);
             }
         }
         //On a lu le fichier en entier à ce moment
@@ -223,9 +229,17 @@ public class Starter {
      * -le projet.coordinateur de fin de partie
      * -les règles
      */
-    public void initJoueurs(){
-        for(int i = 0;i<joueurs.length;i++){
+    public void initJoueurs() throws RemoteException {
+        int i;
+        for(i = 0;i<joueurs.length;i++){
             joueurs[i].setId(i); //Id du joueurs
+        }
+        for (i =0;i<joueurs.length;i++){
+            if(joueurs[i].ajouteJoueurs(connectionRMIJoueur)){
+                System.err.println("Joueur "+i+": OK");
+            }else{
+                System.err.println("Joueur "+i+": erreur pour se connecter aux autres joueurs");
+            }
         }
     }
 
@@ -271,6 +285,7 @@ public class Starter {
         try {
             //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un projet.producteur
             Starter s = new Starter("ressource/init");
+            s.initJoueurs();
             s.info(System.out);
         } catch (IOException | PException e) {
             e.printStackTrace();
