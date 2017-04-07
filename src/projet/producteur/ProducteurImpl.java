@@ -92,8 +92,14 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     }
 
     @Override
-    public Integer[] whatDoYouProduce() {
-        return (Integer[])ressourceDispo.keySet().toArray();
+    public int[] whatDoYouProduce() {
+        int[] ids = new int[ressourceDispo.keySet().size()];
+        int j = 0;
+        for(int i:ressourceDispo.keySet()){
+            ids[j] = i;
+            j++;
+        }
+        return ids;
     }
 
     public void setProductions(Map<Integer,Integer> ressourceDispo){

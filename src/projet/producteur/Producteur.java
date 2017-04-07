@@ -11,7 +11,7 @@ public interface Producteur extends Remote
 {
    int getRessource(int id,int n) throws RemoteException;
    boolean isReady() throws RemoteException;
-   Integer[] whatDoYouProduce() throws RemoteException;
+   int[] whatDoYouProduce() throws RemoteException;
    void setProductions(Map<Integer,Integer> ressourceDispo) throws RemoteException;
 
 }

@@ -7,7 +7,10 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by jpabegg on 25/03/17.
@@ -16,12 +19,16 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Producteur[] producteurs;//liste des producteurs
     private Joueur[] joueurs;//liste des joueurs
     private int id;//indice du projet.joueur dans le tableau
+    private Map<Integer,Set<Producteur>> mapRessourceProducteurs;
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
     private boolean working;
 
     public JoueurImpl() throws RemoteException {
         super();
+        mapRessourceProducteurs = new HashMap<Integer, Set<Producteur>>();
+        ressources = new HashMap<Integer,Integer>();
+        objectifs = new HashMap<Integer, Integer>();
     }
 
 
@@ -70,6 +77,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         for (int i = 0;i<rmi.length;i++){
             try {
                 producteurs[i] = (Producteur)Naming.lookup(rmi[i]);
+                whatDoHeProduce(producteurs[i]);
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -78,6 +86,18 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return true;
     }
 
+    public void whatDoHeProduce(Producteur p) throws RemoteException {
+        int[] ressourcesProduites;
+        ressourcesProduites = p.whatDoYouProduce();
+        Set<Producteur> set;
+        for (int i =0;i<ressourcesProduites.length;i++){
+            if((set = mapRessourceProducteurs.get(i)) == null){
+                set = new HashSet<Producteur>();
+            }
+            set.add(p);
+            mapRessourceProducteurs.put(i,set);
+        }
+    }
     public void setProducteurs(Producteur[] producteurs) {
         this.producteurs = producteurs;
     }
