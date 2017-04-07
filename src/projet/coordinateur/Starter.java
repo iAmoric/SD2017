@@ -155,12 +155,12 @@ public class Starter {
             }else{
                 //TODO se connecter en RMI pour récupérer le projet.joueur
 
-                try {
+                /*try {
                     listJoueur.add((Joueur)Naming.lookup(ligne));
                 } catch (NotBoundException e) {
                     throw new RMIExecption(ligne);
                 }
-                listString.add(ligne);
+                listString.add(ligne);*/
             }
         }
         //On a lu le fichier en entier à ce moment
@@ -189,11 +189,11 @@ public class Starter {
         List<Producteur> listProducteur = new ArrayList<Producteur>();
         List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
-            if(ligne.equals("Regles")){
+            if(ligne.equals("Regle")){
                 //TODO lire les règles
                 parseRegle(reader);
             }
-            elements = ligne.split(" ");
+            /*elements = ligne.split(" ");
             try {
                 //connection au producteur
                 producteur = (Producteur) Naming.lookup(elements[0]) ;
@@ -210,7 +210,7 @@ public class Starter {
                 producteur.setProductions(mapProducteur);
             } catch (NotBoundException e) {
                 throw new RMIExecption(elements[0]);
-            }
+            }*/
 
             //TODO découposer la ligne et indiquer au projet.producteur les ressources qu'il produit
         }
@@ -228,8 +228,39 @@ public class Starter {
 
     private void parseRegle(BufferedReader reader) throws IOException {
         String ligne;
+        String[] elements;
         while ( (ligne = reader.readLine()) != null){
-
+            elements = ligne.split(" ");
+            if (elements.length == 2) {
+                switch (elements[0]) {
+                    case "K" :
+                        regenRessource = Integer.parseInt(elements[1]);
+                        break;
+                    case "N" :
+                        nbRessourcePrenable = Integer.parseInt(elements[1]);
+                        break;
+                    case "STEAL" :
+                        if (elements[1].equals("ON"))
+                            canSteal = true;
+                        else if (elements[1].equals("OFF"))
+                            canSteal = false;
+                        break;
+                    case "EPUISABLE" :
+                        if (elements[1].equals("ON"))
+                            isEpuisable = true;
+                        else if (elements[1].equals("OFF"))
+                            isEpuisable = false;
+                        break;
+                    default :
+                        System.err.println("Problème regle inconnue : " + ligne);
+                        //TODO exception problème lecture
+                        break;
+                }
+            }
+            else {
+                System.err.println("Problème manque argument : " + ligne);
+                //TODO exception manque argument
+            }
         }
     }
 
@@ -274,10 +305,10 @@ public class Starter {
             os.println(s + ":" + objectifs.get(k));
             k++;
         }
-        os.println("\nJoueurs");
+        /*os.println("\nJoueurs");
         for(Joueur j: joueurs){
             os.println(j);
-        }
+        }*/
         os.println("\nProducteurs");
     }
 
@@ -304,7 +335,7 @@ public class Starter {
         File f = new File(args[0]);*/
         try {
             Starter s = new Starter("ressource/init");
-            s.initJoueurs();
+            //s.initJoueurs();
             s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();
