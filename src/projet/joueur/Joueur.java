@@ -11,5 +11,5 @@ public interface  Joueur extends Remote{
     boolean observe(Joueur j) throws RemoteException;
     void setId(int id) throws RemoteException;
     boolean ajouteJoueurs(String[] rmi) throws RemoteException;
-    boolean setJoueurs(String[] joueursString) throws RemoteException;
+    boolean ajouteProducteurs(String[] rmi)throws RemoteException;
 }

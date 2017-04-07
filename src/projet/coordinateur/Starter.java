@@ -231,14 +231,20 @@ public class Starter {
      */
     public void initJoueurs() throws RemoteException {
         int i;
+        //Donner l'id du joueur à chaque joueur
         for(i = 0;i<joueurs.length;i++){
             joueurs[i].setId(i); //Id du joueurs
         }
-        for (i =0;i<joueurs.length;i++){
-            if(joueurs[i].ajouteJoueurs(connectionRMIJoueur)){
-                System.err.println("Joueur "+i+": OK");
-            }else{
-                System.err.println("Joueur "+i+": erreur pour se connecter aux autres joueurs");
+        //Donner l'adresse des autres joueurs au joueur ( il n'a pas besoin de connaitre l'id des autre)
+        for (i =0;i<joueurs.length;i++) {
+            if (joueurs[i].ajouteJoueurs(connectionRMIJoueur)) {
+                if(joueurs[i].ajouteProducteurs(connectionRMIProducteur)){
+                    System.err.println("Joueur " + i + ": OK");
+                }else{
+                    System.err.println("Joueur " + i + ": erreur pour se connecter aux producteurs");
+                }
+            } else {
+                System.err.println("Joueur " + i + ": erreur pour se connecter aux autres joueurs");
             }
         }
     }
@@ -283,10 +289,9 @@ public class Starter {
         }
         File f = new File(args[0]);*/
         try {
-            //TODO entrer le Starter dans rmiregistry ( quand on arrivera à lancer un projet.producteur
             Starter s = new Starter("ressource/init");
             s.initJoueurs();
-            s.info(System.out);
+            s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();
         }

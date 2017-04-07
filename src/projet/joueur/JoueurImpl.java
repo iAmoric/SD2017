@@ -6,12 +6,13 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 
 /**
  * Created by jpabegg on 25/03/17.
  */
-public class JoueurImpl implements Joueur {
+public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Producteur[] producteurs;//liste des producteurs
     private Joueur[] joueurs;//liste des joueurs
     private int id;//indice du projet.joueur dans le tableau
@@ -19,8 +20,8 @@ public class JoueurImpl implements Joueur {
     private Map<Integer,Integer> objectifs;
     private boolean working;
 
-    public JoueurImpl(){
-
+    public JoueurImpl() throws RemoteException {
+        super();
     }
 
 
@@ -55,9 +56,7 @@ public class JoueurImpl implements Joueur {
                 try {
                     joueurs[j] = (Joueur) Naming.lookup(rmi[i]) ;
                 }
-                catch (NotBoundException re) {System.out.println(re) ; return false;}
-                catch (RemoteException re) { System.out.println(re) ; return false;}
-                catch (MalformedURLException e) { System.out.println(e) ; return false; }
+                catch (Exception re) {System.out.println(re) ; return false;}
                 j++;
             }
 
@@ -65,26 +64,18 @@ public class JoueurImpl implements Joueur {
         return true;
     }
 
-    public boolean setJoueurs(String[] joueursString) throws RemoteException {
-        joueurs = new Joueur[joueursString.length-1];
-        int j = 0;
-        for (int i = 0;i<joueursString.length;i++){
-            if(i != id){
-                try {
-                    joueurs[j] = (Joueur) Naming.lookup(joueursString[i]);
-                    j++;
-                } catch (NotBoundException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }finally {
-                    return false;
-                }
 
+    public boolean ajouteProducteurs(String[] rmi) throws RemoteException {
+        producteurs = new Producteur[rmi.length];
+        for (int i = 0;i<rmi.length;i++){
+            try {
+                producteurs[i] = (Producteur)Naming.lookup(rmi[i]);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
         }
         return true;
-
     }
 
     public void setProducteurs(Producteur[] producteurs) {

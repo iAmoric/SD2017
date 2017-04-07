@@ -17,8 +17,8 @@ public class LancerJoueur {
             Joueur objLocal = (Joueur) impl;
             JoueurImpl implB = new JoueurImpl();
             Naming.rebind( "rmi://localhost:"+portRMI+"/JoueurA" ,objLocal) ;
-            objLocal = (Joueur)impl;
-            Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocal);
+            Joueur objLocalB = (Joueur)impl;
+            Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocalB);
             System.out.println("Joueur  A et B pret") ;
             //s'enregistrer chez Starter
 

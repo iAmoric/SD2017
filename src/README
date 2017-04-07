@@ -1,0 +1,5 @@
+Instruction pour lancer le système:
+
+java projet.producteur.LancerProducteur
+java projet.joueur.LancerJoueur
+java projet.coordinateur.Starter
