@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by jpabegg on 29/03/17.
  * Coordinateur chargé d'initialiser les joueurs et les producteurs
  * à partir du fichier d'init
+ * TODO indiquer le nombre de ressource prenable d'un coup/le temps de regen des ressource/si elles sont epuisable dans init
  */
 public class Starter {
 
@@ -31,6 +32,10 @@ public class Starter {
     private boolean haveOptionSUM = false; //indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL = false; //indique que le même nombre de unité doit être atteint pour toutes les ressources
     private int sommeObjectif = -1;
+    private int nbRessourcePrenable;//nb max de ressource prenable d'un coup sur un producteur (N dans init)
+    private int regenRessource;//délai en ms pour produire des ressource (K dans init)
+    private boolean canSteal;
+    private boolean isEpuisable;//savoir si on peut épuiser une ressource
 
 
     public Starter(File file) throws IOException, PException {
@@ -186,6 +191,7 @@ public class Starter {
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Regles")){
                 //TODO lire les règles
+                parseRegle(reader);
             }
             elements = ligne.split(" ");
             try {
@@ -218,6 +224,13 @@ public class Starter {
             }
         }
 
+    }
+
+    private void parseRegle(BufferedReader reader) throws IOException {
+        String ligne;
+        while ( (ligne = reader.readLine()) != null){
+
+        }
     }
 
     /**
