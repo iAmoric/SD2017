@@ -2,6 +2,7 @@ package projet.joueur;
 
 import projet.producteur.Producteur;
 
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -22,7 +23,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Map<Integer,Set<Producteur>> mapRessourceProducteurs;
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
-    private boolean working;
+    private boolean isReady;
 
     public JoueurImpl() throws RemoteException {
         super();
@@ -42,6 +43,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     public boolean observe(Joueur j) {
         return false;
+    }
+
+    public boolean isReady() throws RemoteException {
+        return isReady;
     }
 
 
@@ -83,6 +88,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
                 return false;
             }
         }
+        isReady = true;
         return true;
     }
 
@@ -100,6 +106,14 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     }
     public void setProducteurs(Producteur[] producteurs) {
         this.producteurs = producteurs;
+    }
+
+    public void info(PrintStream os){
+        os.println("Joueur "+id);
+        os.println("Ressources:");
+        for (int i :mapRessourceProducteurs.keySet()){
+            os.println("id/nbProducteur "+i+"/"+mapRessourceProducteurs.get(i).size());
+        }
     }
 
     public void setRessources(Map<Integer, Integer> ressources) {

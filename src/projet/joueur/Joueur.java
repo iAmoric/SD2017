@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 public interface  Joueur extends Remote{
     int getRessources(int idRessource) throws RemoteException;
     boolean observe(Joueur j) throws RemoteException;
+    boolean isReady() throws RemoteException;
     void setId(int id) throws RemoteException;
     boolean ajouteJoueurs(String[] rmi) throws RemoteException;
     boolean ajouteProducteurs(String[] rmi)throws RemoteException;

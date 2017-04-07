@@ -17,13 +17,13 @@ public class LancerJoueur {
             Joueur objLocal = (Joueur) impl;
             JoueurImpl implB = new JoueurImpl();
             Naming.rebind( "rmi://localhost:"+portRMI+"/JoueurA" ,objLocal) ;
-            Joueur objLocalB = (Joueur)impl;
+            Joueur objLocalB = (Joueur)implB;
             Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocalB);
             System.out.println("Joueur  A et B pret") ;
             //s'enregistrer chez Starter
 
             //Tant que le Starter ne l'a pas initialisé
-            while(true){
+            while(!impl.isReady() || !implB.isReady()){
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -31,7 +31,8 @@ public class LancerJoueur {
                 }
             }
             //Lancer la partie
-
+            impl.info(System.err);
+            implB.info(System.err);
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }
