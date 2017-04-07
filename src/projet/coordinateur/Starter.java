@@ -155,12 +155,12 @@ public class Starter {
             }else{
                 //TODO se connecter en RMI pour récupérer le projet.joueur
 
-                /*try {
+                try {
                     listJoueur.add((Joueur)Naming.lookup(ligne));
                 } catch (NotBoundException e) {
                     throw new RMIExecption(ligne);
                 }
-                listString.add(ligne);*/
+                listString.add(ligne);
             }
         }
         //On a lu le fichier en entier à ce moment
@@ -193,7 +193,7 @@ public class Starter {
                 //TODO lire les règles
                 parseRegle(reader);
             }
-            /*elements = ligne.split(" ");
+            elements = ligne.split(" ");
             try {
                 //connection au producteur
                 producteur = (Producteur) Naming.lookup(elements[0]) ;
@@ -210,7 +210,7 @@ public class Starter {
                 producteur.setProductions(mapProducteur);
             } catch (NotBoundException e) {
                 throw new RMIExecption(elements[0]);
-            }*/
+            }
 
             //TODO découposer la ligne et indiquer au projet.producteur les ressources qu'il produit
         }
@@ -305,10 +305,10 @@ public class Starter {
             os.println(s + ":" + objectifs.get(k));
             k++;
         }
-        /*os.println("\nJoueurs");
+        os.println("\nJoueurs");
         for(Joueur j: joueurs){
             os.println(j);
-        }*/
+        }
         os.println("\nProducteurs");
     }
 
@@ -335,7 +335,7 @@ public class Starter {
         File f = new File(args[0]);*/
         try {
             Starter s = new Starter("ressource/init");
-            //s.initJoueurs();
+            s.initJoueurs();
             s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();
