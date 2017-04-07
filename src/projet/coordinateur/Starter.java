@@ -200,8 +200,8 @@ public class Starter {
                     idRessource = findIdRessource(elements[i]);
                     mapProducteur.put(idRessource,Integer.parseInt(elements[i+1]));
                 }
-                //Pour tester
-                producteur.init();
+                //On indique directement au producteur ce qu'il produit
+                producteur.setProductions(mapProducteur);
             } catch (NotBoundException e) {
                 throw new RMIExecption(elements[0]);
             }

@@ -1,7 +1,9 @@
 package projet.producteur;
 
+import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,9 +54,10 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      * @return le nombre de ressource obtenue ou -1 si erreur
      */
     public synchronized int getRessource(int id,int n)throws RemoteException{
-        if(n<0)return -1;
-
+        if(n<0)return -1;//un ne peux pas demander un nombre negatif d'unité de ressource
+        if(!ressourceDispo.keySet().contains(id))return -1;//On ne peut pas demander une ressource qu'il ne produit pas
         int result = 0;
+
         int dispo = ressourceDispo.get(id);
         if(dispo - n >= 0){
             result = n;
@@ -88,10 +91,15 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         return isReady;
     }
 
-    public void init() throws RemoteException{
-        isReady = true;
+    @Override
+    public Integer[] whatDoYouProduce() {
+        return (Integer[])ressourceDispo.keySet().toArray();
     }
 
+    public void setProductions(Map<Integer,Integer> ressourceDispo){
+        this.ressourceDispo = new HashMap<Integer, Integer>(ressourceDispo);
+        isReady = true;
+    }
 
     public void startProduction(){
         if(thread == null){
@@ -102,5 +110,13 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
 
     public void stopProduction(){
         thread.stopWorking();
+    }
+
+
+    public void info(PrintStream os){
+        os.println("Production:");
+        for (int i:ressourceDispo.keySet()){
+            os.println(" id/quantitée "+i+"/"+ressourceDispo.get(i));
+        }
     }
 }

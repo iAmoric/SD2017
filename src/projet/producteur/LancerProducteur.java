@@ -34,7 +34,7 @@ public class LancerProducteur {
                     e.printStackTrace();
                 }
             }
-            System.out.println("Coucou");
+            impl.info(System.err);
             //impl.startProduction();
 
         }
