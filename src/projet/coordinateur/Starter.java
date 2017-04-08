@@ -29,6 +29,8 @@ public class Starter {
     private String[] connectionRMIJoueur;
     private Producteur[] producteurs;
     private String[] connectionRMIProducteur;
+    private End coordinateurFin;
+    private String connectionRMIFin;
     private boolean haveOptionSUM = false; //indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL = false; //indique que le même nombre de unité doit être atteint pour toutes les ressources
     private int sommeObjectif = -1;
@@ -253,6 +255,13 @@ public class Starter {
                         else if (elements[1].equals("OFF"))
                             isEpuisable = false;
                         break;
+                    case "FIN":
+                        try {
+                            coordinateurFin = (End)Naming.lookup(elements[1]);
+                            connectionRMIFin = elements[1];
+                        } catch (NotBoundException e) {
+                            //TODO faire une erreur
+                        }
                     default :
                         System.err.println("Problème regle inconnue : " + ligne);
                         //TODO exception problème lecture
@@ -266,6 +275,10 @@ public class Starter {
         }
     }
 
+    public void initFin() throws RemoteException{
+        coordinateurFin.setJoueurs(connectionRMIJoueur);
+        coordinateurFin.setProducteurs(connectionRMIProducteur);
+    }
     /**
      * Initialise les infos disponible chez les joueurs
      * -son id
@@ -285,7 +298,11 @@ public class Starter {
         for (i =0;i<joueurs.length;i++) {
             if (joueurs[i].ajouteJoueurs(connectionRMIJoueur)) {
                 if(joueurs[i].ajouteProducteurs(connectionRMIProducteur)){
-                    System.err.println("Joueur " + i + ": OK");
+                    if(joueurs[i].ajouteFin(connectionRMIFin)){
+                        System.err.println("Joueur " + i + ": OK");
+                    }else{
+                        System.err.println("Joueur " + i + ": erreur pour se connecter au coordinateur de fin");
+                    }
                 }else{
                     System.err.println("Joueur " + i + ": erreur pour se connecter aux producteurs");
                 }
@@ -366,6 +383,7 @@ public class Starter {
         try {
             Starter s = new Starter("ressource/init");
             s.initJoueurs();
+            s.initFin();
             s.initRegle();
             s.startGame();
             s.info(System.err);

@@ -1,6 +1,7 @@
 package projet.joueur;
 
 import org.omg.PortableInterceptor.INACTIVE;
+import projet.coordinateur.End;
 import projet.producteur.Producteur;
 
 import java.io.PrintStream;
@@ -17,6 +18,7 @@ import java.util.*;
 public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Producteur[] producteurs;//liste des producteurs
     private Joueur[] joueurs;//liste des joueurs
+    private End finDePartie;
     private int id;//indice du joueur dans le tableau
     private Map<Integer,List<Producteur>> mapRessourceProducteurs;
     private Map<Integer,Integer> ressources;
@@ -92,6 +94,18 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return true;
     }
 
+
+    public boolean ajouteFin(String rmi) throws RemoteException {
+        try {
+            finDePartie = (End)Naming.lookup(rmi);
+            return true;
+        } catch (MalformedURLException| NotBoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
     @Override
     public void setRules(int n, boolean canSteal, boolean isEpuisable) {
         nbRessourcePrenable = n;
@@ -164,8 +178,9 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return ressources;
     }
 
-    public synchronized void stop(){
+    public synchronized void stop() throws RemoteException {
         haveFinished = true;
+        finDePartie.haveFinished(id);
     }
 
     public Map<Integer,List<Producteur>> getListProducteur(){
@@ -179,4 +194,5 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             t.start();
         }
     }
+
 }

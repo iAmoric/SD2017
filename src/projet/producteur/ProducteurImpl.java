@@ -118,7 +118,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         }
     }
 
-    public void stopProduction(){
+    public void stopProduction()throws RemoteException{
         thread.stopWorking();
     }
 

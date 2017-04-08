@@ -2,6 +2,7 @@ package projet.joueur;
 
 import projet.producteur.Producteur;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -62,7 +63,11 @@ public class ThreadJoueur extends Thread {
             }
         }
         if(list.size() == 0) {
-            j.stop();
+            try {
+                j.stop();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
         return list;
     }
