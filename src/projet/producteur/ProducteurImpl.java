@@ -91,7 +91,6 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         return isReady;
     }
 
-    @Override
     public int[] whatDoYouProduce() {
         int[] ids = new int[ressourceDispo.keySet().size()];
         int j = 0;
@@ -105,6 +104,11 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     public void setProductions(Map<Integer,Integer> ressourceDispo){
         this.ressourceDispo = new HashMap<Integer, Integer>(ressourceDispo);
         isReady = true;
+    }
+
+    public void setRules(boolean isEpuisable, int k) throws RemoteException {
+        isRessourceEpuisable = isEpuisable;
+        this.k = k;
     }
 
     public void startProduction(){

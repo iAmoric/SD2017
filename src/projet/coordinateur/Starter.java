@@ -190,29 +190,33 @@ public class Starter {
         List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
             if(ligne.equals("Regle")){
-                //TODO lire les règles
                 parseRegle(reader);
-            }
-            elements = ligne.split(" ");
-            try {
-                //connection au producteur
-                producteur = (Producteur) Naming.lookup(elements[0]) ;
-                //ajout du producteur dans la liste de producteur
-                listProducteur.add(producteur);
-                //ajout de l'adresse du producteur dans la liste d'adresse
-                listString.add(elements[0]);
-                mapProducteur = new HashMap<Integer, Integer>();
-                for (int i = 1;i<elements.length;i = i + 2){
-                    idRessource = findIdRessource(elements[i]);
-                    mapProducteur.put(idRessource,Integer.parseInt(elements[i+1]));
+                break;
+            }else {
+                elements = ligne.split(" ");
+                try {
+                    //connection au producteur
+                    producteur = (Producteur) Naming.lookup(elements[0]);
+                    //ajout du producteur dans la liste de producteur
+                    listProducteur.add(producteur);
+                    //ajout de l'adresse du producteur dans la liste d'adresse
+                    listString.add(elements[0]);
+                    mapProducteur = new HashMap<Integer, Integer>();
+                    for (int i = 1; i < elements.length; i = i + 2) {
+                        idRessource = findIdRessource(elements[i]);
+                        valInitiale = Integer.parseInt(elements[i + 1]);
+                        //On a pas le droit de commencer avec des ressources négatives
+                        if(valInitiale<0){
+                            valInitiale = 0;
+                        }
+                        mapProducteur.put(idRessource,valInitiale);
+                    }
+                    //On indique directement au producteur ce qu'il produit
+                    producteur.setProductions(mapProducteur);
+                } catch (NotBoundException e) {
+                    throw new RMIExecption(elements[0]);
                 }
-                //On indique directement au producteur ce qu'il produit
-                producteur.setProductions(mapProducteur);
-            } catch (NotBoundException e) {
-                throw new RMIExecption(elements[0]);
             }
-
-            //TODO découposer la ligne et indiquer au projet.producteur les ressources qu'il produit
         }
         //On a lu le fichier en entier à ce moment
         if(listProducteur.size() != 0){
@@ -295,6 +299,16 @@ public class Starter {
     }
 
     /**
+     * Indique les règle de la partie chez les Joueur et les Producteur
+     */
+    public void initRegle() throws RemoteException {
+        int i;
+        //Indique au producteur si les ressources sont épuisable et le délai pour génerer des ressources
+        for(i = 0;i<producteurs.length;i++){
+            producteurs[i].setRules(isEpuisable,regenRessource);
+        }
+    }
+    /**
      * Écrit les informations du Starter dans un flux de sortie
      * @param os: le flux de sortie
      */
@@ -336,6 +350,7 @@ public class Starter {
         try {
             Starter s = new Starter("ressource/init");
             s.initJoueurs();
+            s.initRegle();
             s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();
