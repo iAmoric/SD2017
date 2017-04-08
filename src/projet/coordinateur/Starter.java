@@ -153,8 +153,6 @@ public class Starter {
             if(ligne.equals("Producteurs")){
                 parseProducteur(reader);
             }else{
-                //TODO se connecter en RMI pour récupérer le projet.joueur
-
                 try {
                     listJoueur.add((Joueur)Naming.lookup(ligne));
                 } catch (NotBoundException e) {
@@ -303,9 +301,14 @@ public class Starter {
      */
     public void initRegle() throws RemoteException {
         int i;
+        //Producteur
         //Indique au producteur si les ressources sont épuisable et le délai pour génerer des ressources
         for(i = 0;i<producteurs.length;i++){
             producteurs[i].setRules(isEpuisable,regenRessource);
+        }
+        //Joueur
+        for(i = 0;i<joueurs.length;i++){
+            joueurs[i].setRules(nbRessourcePrenable,canSteal,isEpuisable);
         }
     }
     /**
@@ -324,6 +327,9 @@ public class Starter {
             os.println(j);
         }
         os.println("\nProducteurs");
+        for(Producteur p:producteurs){
+            os.print(p);
+        }
     }
 
     /**

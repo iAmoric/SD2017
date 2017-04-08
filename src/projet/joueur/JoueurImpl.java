@@ -23,9 +23,12 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Map<Integer,Set<Producteur>> mapRessourceProducteurs;
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
+    private int nbRessourcePrenable;//nb de ressource récupérable en une fois chez un producteur
     private boolean isReady;
     private boolean doSum = false;
     private int sumObjectif;
+    private boolean isEpuisable;
+    private boolean canSteal;
 
     public JoueurImpl() throws RemoteException {
         super();
@@ -99,6 +102,13 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         }
         isReady = true;
         return true;
+    }
+
+    @Override
+    public void setRules(int n, boolean canSteal, boolean isEpuisable) {
+        nbRessourcePrenable = n;
+        this.canSteal = canSteal;
+        this.isEpuisable = isEpuisable;
     }
 
     public void whatDoHeProduce(Producteur p) throws RemoteException {

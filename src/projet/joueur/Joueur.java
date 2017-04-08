@@ -15,4 +15,5 @@ public interface  Joueur extends Remote{
     void setObjectifs(Map<Integer,Integer> objectif,boolean doSum,int sum) throws RemoteException;
     boolean ajouteJoueurs(String[] rmi) throws RemoteException;
     boolean ajouteProducteurs(String[] rmi)throws RemoteException;
+    void setRules(int n,boolean canSteal,boolean isEpuisable)throws RemoteException;
 }
