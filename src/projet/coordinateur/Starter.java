@@ -311,6 +311,16 @@ public class Starter {
             joueurs[i].setRules(nbRessourcePrenable,canSteal,isEpuisable);
         }
     }
+
+    public void startGame() throws RemoteException {
+        int i;
+        for(i = 0;i<producteurs.length;i++){
+            producteurs[i].startProduction();
+        }
+        for(i = 0;i<joueurs.length;i++){
+            joueurs[i].start();
+        }
+    }
     /**
      * Écrit les informations du Starter dans un flux de sortie
      * @param os: le flux de sortie
@@ -357,6 +367,7 @@ public class Starter {
             Starter s = new Starter("ressource/init");
             s.initJoueurs();
             s.initRegle();
+            s.startGame();
             s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();

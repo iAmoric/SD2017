@@ -111,7 +111,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         this.k = k;
     }
 
-    public void startProduction(){
+    public void startProduction() throws RemoteException{
         if(thread == null){
             thread = new ThreadRessource(this,k);
             thread.start();

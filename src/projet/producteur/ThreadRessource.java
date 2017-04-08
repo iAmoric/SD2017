@@ -21,7 +21,7 @@ public class ThreadRessource extends Thread {
         super.run();
         while (working){
             try {
-                wait(k);
+                Thread.sleep(k);
                 producteur.addRessource();
             } catch (InterruptedException e) {
                 e.printStackTrace();

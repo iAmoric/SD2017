@@ -14,5 +14,6 @@ public interface Producteur extends Remote
    int[] whatDoYouProduce() throws RemoteException;
    void setProductions(Map<Integer,Integer> ressourceDispo) throws RemoteException;
    void setRules(boolean isEpuisable,int k) throws RemoteException;
+   void startProduction() throws RemoteException;
 
 }

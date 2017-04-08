@@ -30,9 +30,6 @@ public class LancerJoueur {
                     e.printStackTrace();
                 }
             }
-            //Lancer la partie
-            impl.info(System.err);
-            implB.info(System.err);
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }
