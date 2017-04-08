@@ -5,6 +5,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 /**
+ * Launcher pour lancer deux joueurs
  * Created by jpabegg on 31/03/17.
  */
 public class LancerJoueur {

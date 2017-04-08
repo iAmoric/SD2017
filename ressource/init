@@ -14,4 +14,4 @@ K 500
 N 10
 STEAL ON
 EPUISABLE ON
-FIN rmi://localhost:5555/EndImpl
+F INrmi://localhost:5555/EndImpl

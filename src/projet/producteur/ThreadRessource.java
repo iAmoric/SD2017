@@ -1,6 +1,7 @@
 package projet.producteur;
 
 /**
+ * Thread chargé de la production de ressource
  * Created by jpabegg on 25/03/17.
  */
 public class ThreadRessource extends Thread {

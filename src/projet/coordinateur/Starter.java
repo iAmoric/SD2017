@@ -17,9 +17,8 @@ import java.util.Map;
 
 /**
  * Created by jpabegg on 29/03/17.
- * Coordinateur chargé d'initialiser les joueurs et les producteurs
- * à partir du fichier d'init
- * TODO indiquer le nombre de ressource prenable d'un coup/le temps de regen des ressource/si elles sont epuisable dans init
+ * Script Coordinateur chargé d'initialiser les joueurs et les producteurs
+ * à partir du fichier d'init et de lancer la partie
  */
 public class Starter {
 

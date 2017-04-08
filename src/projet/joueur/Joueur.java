@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 /**
+ * Interface RMI
  * Created by jpabegg on 25/03/17.
  */
 public interface  Joueur extends Remote{

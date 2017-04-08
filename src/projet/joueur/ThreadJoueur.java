@@ -6,6 +6,10 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 /**
+ * Controller du JoueurImpl
+ * Il est normal que cette classe connaisse la class JoueurImpl
+ * car est elle lié à l'implémentation du comportement du Joueur
+ * TODO créer de nouvelle personnalité (ENUM)
  * Created by jpabegg on 08/04/17.
  */
 public class ThreadJoueur extends Thread {
@@ -23,6 +27,18 @@ public class ThreadJoueur extends Thread {
     }
     
     public void run(){
+        tour();
+        System.err.println("Terminé");
+        j.info(System.err);
+    }
+
+    /**
+     * IA de base pour le joueur:
+     * -choisit une ressource au hasard
+     * -prend des unité de cette ressource jusqu'a atteindre l'objectif
+     * -jusqu'a avoir atteint l'objectif sur toutes les ressources
+     * */
+    private void tour(){
         List<Integer> ressourceNonTermine = new ArrayList<Integer>();
         int i;
         boolean haveAObjectif = false;
@@ -45,10 +61,7 @@ public class ThreadJoueur extends Thread {
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
             }
         }
-        System.err.println("Terminé");
-        j.info(System.err);
     }
-
     /**
      *
      * @return une liste contenant les id des ressources dont on a pas atteint l'objectif

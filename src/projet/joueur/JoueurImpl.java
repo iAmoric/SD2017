@@ -13,6 +13,10 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 /**
+ * Modèle du joueur.
+ * Cette classe contient toutes les informations
+ * que le joueur doit connaitre sur lui-même, sur le système
+ * et sur les règles de la partie
  * Created by jpabegg on 25/03/17.
  */
 public class JoueurImpl extends UnicastRemoteObject implements Joueur {
@@ -94,7 +98,11 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return true;
     }
 
-
+    /**
+     * Setter du coordinateur de fin de partie
+     * @param rmi l'adresse de connection RMI
+     * @return true si la connection est OK / false erreur
+     */
     public boolean ajouteFin(String rmi) throws RemoteException {
         try {
             finDePartie = (End)Naming.lookup(rmi);
@@ -106,13 +114,24 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     }
 
-    @Override
+    /**
+     * Peremt de définir un certain nombre d'informations sur les règles de la partie
+     * @param n le nombre de ressource prenable en une fois chez un producteur
+     * @param canSteal si on peut voler les autres joueurs
+     * @param isEpuisable si la production de ressource est épuisable
+     */
     public void setRules(int n, boolean canSteal, boolean isEpuisable) {
         nbRessourcePrenable = n;
         this.canSteal = canSteal;
         this.isEpuisable = isEpuisable;
     }
 
+    /**
+     * Permet de connaitre les ressources que produit le producteur
+     * et de l'ajouter dans la liste des producteurs qui produisent ces ressources
+     * (il est possible qu'un producteur produise plusieurs ressources )s
+     * @param p: un producteur
+     */
     public void whatDoHeProduce(Producteur p) throws RemoteException {
         int[] ressourcesProduites;
         ressourcesProduites = p.whatDoYouProduce();
