@@ -22,15 +22,6 @@ public class LancerJoueur {
             Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocalB);
             System.out.println("Joueur  A et B pret") ;
             //s'enregistrer chez Starter
-
-            //Tant que le Starter ne l'a pas initialisé
-            while(!impl.isReady() || !implB.isReady()){
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }

@@ -2,6 +2,7 @@ package projet.joueur;
 
 import org.omg.PortableInterceptor.INACTIVE;
 import projet.coordinateur.End;
+import projet.exceptions.StealException;
 import projet.producteur.Producteur;
 
 import java.io.PrintStream;
@@ -28,7 +29,6 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
     private int nbRessourcePrenable;//nb de ressource récupérable en une fois chez un producteur
-    private boolean isReady =false;
     private boolean doSum = false;
     private int sumObjectif;
     private boolean isEpuisable;
@@ -42,9 +42,6 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         ressources = new HashMap<Integer,Integer>();
     }
 
-    public boolean isReady() throws RemoteException {
-        return isReady;
-    }
 
     public void setId(int id) {
         this.id = id;
@@ -94,7 +91,6 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
                 return false;
             }
         }
-        isReady = true;
         return true;
     }
 
@@ -212,6 +208,13 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             Thread t = new ThreadJoueur(this);
             t.start();
         }
+    }
+    private int prendre() throws StealException{
+        return 0;
+    }
+
+    public synchronized int voler(int id, int quantite,Joueur j) throws RemoteException, StealException {
+        return 0;
     }
 
 }

@@ -84,13 +84,6 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         }
     }
 
-    /**
-     * @return faux tant que le producteur n'est pas pret
-     */
-    public boolean isReady() throws RemoteException{
-        return isReady;
-    }
-
     public int[] whatDoYouProduce() {
         int[] ids = new int[ressourceDispo.keySet().size()];
         int j = 0;
