@@ -3,3 +3,25 @@ Instruction pour lancer le système:
 java projet.producteur.LancerProducteur
 java projet.joueur.LancerJoueur
 java projet.coordinateur.Starter
+
+
+Info sur les fichiers de log:
+
+Format:
+
+SIGNATURE
+DATE ACTION(un mot clef) ARGUMENTS
+...
+....
+fin
+
+Différentes actions et arguments:
+
+	prendre Producteur IdRessource QuantiteDemandee QuantiteOptenu QuantiteTotal
+	voler IdJoueur IdRessource QuantiteDemandee QuantiteOptenu QuantiteTotal
+	observerJoueur IdJoueur QuantiteRe0 QuantiteRe1 .... QuantiteReN
+	observerProducteur IdProd QuantiteRe0 QuantiteRe1 .... QuantiteReN
+	antivole
+	finantivole
+	fin
+	
