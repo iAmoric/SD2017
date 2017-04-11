@@ -261,6 +261,7 @@ public class Starter {
                         } catch (NotBoundException e) {
                             //TODO faire une erreur
                         }
+                        break;
                     default :
                         System.err.println("Problème regle inconnue : " + ligne);
                         //TODO exception problème lecture
