@@ -25,3 +25,9 @@ Différentes actions et arguments:
 	finantivole
 	fin
 	
+TODO LIST:
+	->script Java qui lance l'intégralité du système
+	->remplacer les messages de debug par des messages simples
+	->faire le vole et les différentes observations
+	->faire la création de fichier de log Joueur
+	->faire la récupération des fichiers log par le coordinateur End
