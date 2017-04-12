@@ -3,7 +3,6 @@ package projet.coordinateur;
 import projet.exceptions.*;
 import projet.exceptions.tooManyGoalsException;
 import projet.joueur.Joueur;
-import projet.joueur.JoueurImpl;
 import projet.producteur.Producteur;
 
 import java.io.*;
@@ -338,6 +337,7 @@ public class Starter {
             joueurs[i].start();
         }
     }
+
     /**
      * Écrit les informations du Starter dans un flux de sortie
      * @param os: le flux de sortie
@@ -390,6 +390,5 @@ public class Starter {
         } catch (IOException | PException e) {
             e.printStackTrace();
         }
-
     }
 }
