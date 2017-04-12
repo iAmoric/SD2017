@@ -386,7 +386,7 @@ public class Starter {
             s.initFin();
             s.initRegle();
             s.startGame();
-            s.info(System.err);
+            //s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();
         }

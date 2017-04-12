@@ -28,8 +28,7 @@ public class ThreadJoueur extends Thread {
     
     public void run(){
         tour();
-        System.err.println("Terminé");
-        j.info(System.err);
+        System.err.println("Terminé Joueur "+j.getId());
     }
 
     /**

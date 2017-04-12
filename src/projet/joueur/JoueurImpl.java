@@ -229,4 +229,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return result;
     }
 
+    public int getId() {
+        return id;
+    }
 }

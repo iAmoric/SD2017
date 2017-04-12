@@ -27,7 +27,6 @@ public class LancerProducteur {
             Producteur objLocal = (Producteur)impl;
             Naming.rebind( "rmi://localhost:"+portRMI+"/ProducteurA" ,objLocal) ;
             System.out.println("Producteur pret") ;
-            //impl.startProduction();
 
         }
         catch (RemoteException re) { System.out.println(re) ; }

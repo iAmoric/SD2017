@@ -111,8 +111,13 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         }
     }
 
+    /**
+     * Arrete le thread de production du producteur et arrete le processus
+     * @throws RemoteException
+     */
     public void stopProduction()throws RemoteException{
         thread.stopWorking();
+        System.exit(0);
     }
 
 
