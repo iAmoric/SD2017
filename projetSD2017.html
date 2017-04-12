@@ -1,7 +1,6 @@
 <!DOCTYPE html><html lang="fr"><head>    <meta charset="UTF-8">    <title>Projet SD 2017</title>    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script><script src="https://www.gstatic.com/charts/loader.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script></head><body>
-<div class="container">   <div class="row">       <div class="page-header">           <h1>Projet SD 2017 <small>Résumé de la partie</small></h1>        </div>        <div class="panel panel-default">            <div class="panel-body">                <div id="exTab2" class="container">
-                    <!-- NAVIGATION -->
+<div class="container">   <div class="row">       <div class="page-header">           <h1>Projet SD 2017 <small>Résumé de la partie</small></h1>        </div>        <div class="panel panel-default">            <div class="panel-body">                <div id="exTab2" class="container" style="padding-left:0; width:95%">                    <!-- NAVIGATION -->
                     <ul class="nav nav-tabs">
 
 <!-- JOUEURS -->
@@ -33,14 +32,14 @@
 <div class="tab-pane" id="player3"><h3>Evolution des ressources du joueur 3</h3><br><div id="playerChart3" style="height: 300px;"></div><br></div>
 <div class="tab-pane" id="player4"><h3>Evolution des ressources du joueur 4</h3><br><div id="playerChart4" style="height: 300px;"></div><br></div>
 <div class="tab-pane" id="player5"><h3>Evolution des ressources du joueur 5</h3><br><div id="playerChart5" style="height: 300px;"></div><br></div>
-<!-- JOUEURS -->
+<!-- PRODUCTEURS -->
 
-<div class="tab-pane" id="player"><h3>Evolution des ressources totales des producteurs</h3><br><div id="totalProducterChart" style="height: 300px;">Graphique bliblablou</div><br></div>
-<div class="tab-pane" id="player1"><h3>Evolution des ressources du producteur 1</h3><br><div id="producterChart1" style="height: 300px;"></div><br></div>
-<div class="tab-pane" id="player2"><h3>Evolution des ressources du producteur 2</h3><br><div id="producterChart2" style="height: 300px;"></div><br></div>
-<div class="tab-pane" id="player3"><h3>Evolution des ressources du producteur 3</h3><br><div id="producterChart3" style="height: 300px;"></div><br></div>
-<div class="tab-pane" id="player4"><h3>Evolution des ressources du producteur 4</h3><br><div id="producterChart4" style="height: 300px;"></div><br></div>
-<div class="tab-pane" id="player5"><h3>Evolution des ressources du producteur 5</h3><br><div id="producterChart5" style="height: 300px;"></div><br></div>
+<div class="tab-pane" id="producter"><h3>Evolution des ressources totales des producteurs</h3><br><div id="totalProducterChart" style="height: 300px;">Graphique bliblablou</div><br></div>
+<div class="tab-pane" id="producter1"><h3>Evolution des ressources du producteur 1</h3><br><div id="producterChart1" style="height: 300px;"></div><br></div>
+<div class="tab-pane" id="producter2"><h3>Evolution des ressources du producteur 2</h3><br><div id="producterChart2" style="height: 300px;"></div><br></div>
+<div class="tab-pane" id="producter3"><h3>Evolution des ressources du producteur 3</h3><br><div id="producterChart3" style="height: 300px;"></div><br></div>
+<div class="tab-pane" id="producter4"><h3>Evolution des ressources du producteur 4</h3><br><div id="producterChart4" style="height: 300px;"></div><br></div>
+<div class="tab-pane" id="producter5"><h3>Evolution des ressources du producteur 5</h3><br><div id="producterChart5" style="height: 300px;"></div><br></div>
 </div></div></div></div></div></div>
 <script type="text/javascript">
 
@@ -52,25 +51,12 @@
 
       function drawTotalPlayerChart() {
 
-        var data = google.visualization.arrayToDataTable([
-          ['Time' , 'Joueur 1', 'Joueur 2', 'Joueur 3', 'Joueur 4', 'Joueur 5'],
-['', 431, 227, 289, 463, 703],
-['', 272, 547, 713, 436, 700],
-['', 163, 211, 499, 760, 621],
-['', 470, 360, 625, 478, 735],
-['', 645, 582, 380, 397, 343],
-['', 364, 361, 607, 527, 798],
-['', 452, 512, 730, 691, 708],
-['', 545, 683, 358, 505, 617],
-['', 390, 473, 669, 399, 595],
-['', 667, 140, 309, 132, 676],
-]);
-
-   var options = {
+        var data = google.visualization.arrayToDataTable([["Time","joueur1","joueur2","joueur3","joueur4","joueur5"],["",15,5,0,15,4],["",17,23,11,18,13],["",32,35,38,26,21],["",45,47,31,48,34]]);   var options = {
    title: '',
    hAxis: {title: '',  titleTextStyle: {color: '#333'}},
-   vAxis: {minValue: 0}
-   };
+   vAxis: {minValue: 0},
+ isStacked : true,
+   legend: {position: 'bottom'}   };
 
         var chart = new google.visualization.AreaChart(document.getElementById('totalPlayerChart'));
         chart.draw(data, options);

@@ -1,8 +1,11 @@
 package projet.coordinateur;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Created by lucas on 11/04/17.
@@ -13,10 +16,40 @@ public class HTMLGenerator {
     int nbProducteurs;
     Random r;
 
+    JSONArray jsonMain;
+    JSONArray json;
+
+
     public HTMLGenerator (int nbJoueurs, int nbProducteurs) {
         this.nbJoueurs = nbJoueurs;
         this.nbProducteurs = nbProducteurs;
         r = new Random();
+
+        createJsonArray();
+        createHtmlFile();
+    }
+
+    public void createJsonArray() {
+        jsonMain = new JSONArray();
+        for (int j = 0; j < 5 ; j++) {
+            json = new JSONArray();
+            for (int i = 0; i < nbJoueurs + 1; i++) {
+                if (j == 0) {
+                    if (i == 0) {
+                        json.add("Time");
+                    } else {
+                        json.add("joueur" + i);
+                    }
+                } else {
+                    if (i == 0) {
+                        json.add("");
+                    } else {
+                        json.add(j*10 + (r.nextInt(20)-10));
+                    }
+                }
+            }
+            jsonMain.add(json);
+        }
     }
 
     public void createHtmlFile() {
@@ -42,7 +75,7 @@ public class HTMLGenerator {
                         "        </div>" +
                         "        <div class=\"panel panel-default\">" +
                         "            <div class=\"panel-body\">" +
-                        "                <div id=\"exTab2\" class=\"container\">\n" +
+                        "                <div id=\"exTab2\" class=\"container\" style=\"padding-left:0; width:95%\">" +
                         "                    <!-- NAVIGATION -->\n" +
                         "                    <ul class=\"nav nav-tabs\">\n");
 
@@ -115,11 +148,11 @@ public class HTMLGenerator {
                 }
             }
 
-            w.println("<!-- JOUEURS -->\n");
+            w.println("<!-- PRODUCTEURS -->\n");
 
             for (int i = 0 ; i < nbJoueurs+1 ; i++){
                 if (i == 0) {
-                    w.println(  "<div class=\"tab-pane\" id=\"player\">" +
+                    w.println(  "<div class=\"tab-pane\" id=\"producter\">" +
                             "<h3>Evolution des ressources totales des producteurs</h3>" +
                             "<br>" +
                             "<div id=\"totalProducterChart\" style=\"height: 300px;\">Graphique bliblablou</div>" +
@@ -127,7 +160,7 @@ public class HTMLGenerator {
                             "</div>");
                 }
                 else {
-                    w.println(  "<div class=\"tab-pane\" id=\"player"+i+"\">" +
+                    w.println(  "<div class=\"tab-pane\" id=\"producter"+i+"\">" +
                             "<h3>Evolution des ressources du producteur " + i + "</h3>" +
                             "<br>" +
                             "<div id=\"producterChart"+i+"\" style=\"height: 300px;\"></div>" +
@@ -154,30 +187,13 @@ public class HTMLGenerator {
                     "\n" +
                     "      function drawTotalPlayerChart() {\n" +
                     "\n" +
-                    "        var data = google.visualization.arrayToDataTable([\n" +
-                    "          ['Time' ");
-            for (int i = 1; i<nbJoueurs+1; i++) {
-                w.print(", 'Joueur "+i+"'");
-            }
-            w.println("],");
-
-            for (int i = 0 ; i<10; i++) {
-                for (int j = 0 ; j<nbJoueurs+1; j++) {
-                    if (j==0) {
-                        w.print("[''");
-                    }
-                    else {
-                        w.print(", " + (r.nextInt(700)+100));
-                    }
-                }
-                w.println("],");
-            }
-            w.println("]);\n");
+                    "        var data = google.visualization.arrayToDataTable(" + jsonMain + ");");
 
             w.println(  "   var options = {\n" +
                         "   title: '',\n" +
-                        "   hAxis: {title: 'time',  titleTextStyle: {color: '#333'}},\n" +
-                        "   vAxis: {minValue: 0}\n" +
+                        "   hAxis: {title: '',  titleTextStyle: {color: '#333'}},\n" +
+                        "   vAxis: {minValue: 0},\n" +
+                        " isStacked : true,\n" +
                         "   legend: {position: 'bottom'}" +
                         "   };\n" +
                     "\n" +
