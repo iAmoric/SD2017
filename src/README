@@ -28,5 +28,5 @@ Différentes actions et arguments:
 TODO LIST:
 	->script Java qui lance l'intégralité du système
 	->faire l'observation du système
-	->faire la création de fichier de log Joueur
+	->améliorer les informations dans les log
 	->faire la récupération des fichiers log par le coordinateur End

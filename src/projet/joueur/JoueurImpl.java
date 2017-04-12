@@ -248,4 +248,13 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     public int getId() {
         return id;
     }
+
+    /**
+     * récupérer le log de la partie
+     * @return le fichier
+     */
+    public File log() throws RemoteException{
+        return log;
+    }
+
 }

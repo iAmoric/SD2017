@@ -3,13 +3,12 @@ package projet.coordinateur;
 import projet.joueur.Joueur;
 import projet.producteur.Producteur;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Implémentation du coordinateur de fin de partie
@@ -19,6 +18,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
     private Producteur[] producteurs;
     private Joueur[] joueurs;//on utilisera les joueurs pour récupérer les log de la partie
     private boolean[] joueursEnPartie;
+    private File[] logs;
     protected EndImpl() throws RemoteException {
     }
 
@@ -28,6 +28,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
     public void setJoueurs(String[] rmi) throws RemoteException {
         joueurs = new Joueur[rmi.length];
         joueursEnPartie = new boolean[rmi.length];
+        logs = new File[rmi.length];
         for(int i = 0;i<rmi.length;i++){
             try {
                 joueurs[i] = (Joueur) Naming.lookup(rmi[i]);
@@ -72,10 +73,18 @@ public class EndImpl extends UnicastRemoteObject implements End {
         }
         //Si oui alors on donne l'ordre au producteur de s'arreter
         if(partieTermine){
-            System.err.println("La partie est terminé");
-            for (i = 0;i<producteurs.length;i++){
-                producteurs[i].stopProduction();
-            }
+            finDePartie();
+        }
+    }
+
+    public void finDePartie() throws RemoteException {
+        int i;
+        System.err.println("La partie est terminé");
+        for (i = 0;i<producteurs.length;i++){
+            producteurs[i].stopProduction();
+        }
+        for( i = 0;i<joueurs.length;i++){
+            logs[i] = joueurs[i].log();
         }
     }
 }
