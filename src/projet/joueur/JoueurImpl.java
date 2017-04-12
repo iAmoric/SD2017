@@ -229,6 +229,14 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return result;
     }
 
+    /**
+     * Permet de connaitre les ressources que possède le Joueur
+     * @return les ressources du Joueur
+     */
+    public synchronized Map<Integer,Integer> observe() throws RemoteException{
+        return new HashMap<Integer, Integer>(ressources);
+    }
+
     public int getId() {
         return id;
     }

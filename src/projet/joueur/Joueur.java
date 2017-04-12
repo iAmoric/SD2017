@@ -19,4 +19,5 @@ public interface  Joueur extends Remote{
     void setRules(int n,boolean canSteal,boolean isEpuisable)throws RemoteException;
     void start() throws RemoteException;
     int voler(int id,int quantite) throws RemoteException,StealException;
+    Map<Integer,Integer> observe() throws RemoteException;
 }

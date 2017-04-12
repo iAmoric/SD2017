@@ -121,6 +121,15 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     }
 
 
+    /**
+     * Permet de connaitre les ressources que possède le Producteur
+     * @return les ressource du Producteur
+     */
+    public synchronized Map<Integer,Integer> observe()  throws RemoteException{
+        return new HashMap<Integer, Integer>(ressourceDispo);
+    }
+
+
     public void info(PrintStream os){
         os.println("Production:");
         for (int i:ressourceDispo.keySet()){
