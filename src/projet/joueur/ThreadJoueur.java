@@ -43,7 +43,7 @@ public class ThreadJoueur extends Thread {
         boolean haveAObjectif = false;
         int objectif;
         int retour;
-        Producteur p;
+        int index;
         ressourceNonTermine(ressourceNonTermine,j.getRessources());
         i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
         objectif = objectifs.get(i);
@@ -53,8 +53,8 @@ public class ThreadJoueur extends Thread {
                 objectif = objectifs.get(i);
                 haveAObjectif = true;
             }
-            p = clefRessourceProducteurs.get(i).get(loto.nextInt(clefRessourceProducteurs.get(i).size()));
-            retour = j.getRessource(p,i,k);
+            index = clefRessourceProducteurs.get(i).size();
+            retour = j.getRessource(index,i,k);
             if(retour>=objectif){
                 haveAObjectif = false;
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());

@@ -5,7 +5,7 @@ import projet.coordinateur.End;
 import projet.exceptions.StealException;
 import projet.producteur.Producteur;
 
-import java.io.PrintStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -33,11 +33,15 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private int sumObjectif;
     private boolean isEpuisable;
     private boolean canSteal;
+    private BufferedWriter writer;
+    private File log;
     private boolean haveFinished = false;
     private boolean isPlaying = false;//vrai si on a lancé un ThreadJoueur avec ce joueur
 
-    public JoueurImpl() throws RemoteException {
+    public JoueurImpl(String nomLog) throws IOException {
         super();
+        log = new File(nomLog);
+        writer = new BufferedWriter(new FileWriter(log));
         mapRessourceProducteurs = new HashMap<Integer, List<Producteur>>();
         ressources = new HashMap<Integer,Integer>();
     }
@@ -159,19 +163,23 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     /**
      *
-     * @param p un producteur
+     * @param index l'index du producteur dans le tableau
      * @param idRessource l'id d'une ressource
      * @param quantite le nombre d'unité a recupéré chez le producteur
      * @return le nombre total d'unité de la ressource id que le joueur possède ou -1 si erreur
      */
-    public synchronized int getRessource(Producteur p,int idRessource,int quantite){
+    public synchronized int getRessource(int index,int idRessource,int quantite){
+        int total;
         try {
-            int obtenue = p.getRessource(idRessource,quantite);
+            int obtenue = producteurs[index].getRessource(idRessource,quantite);
             if(obtenue != -1){
-                obtenue = obtenue + ressources.get(idRessource);
-                ressources.put(idRessource,obtenue);
+                total = obtenue + ressources.get(idRessource);
+                ressources.put(idRessource,total);
+                writer.write("PRENDRE "+index+" "+idRessource+" "+quantite+" "+obtenue+" "+total);
+                writer.newLine();
+
             }
-        } catch (RemoteException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return ressources.get(idRessource);
