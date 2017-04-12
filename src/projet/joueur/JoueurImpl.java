@@ -209,12 +209,24 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             t.start();
         }
     }
-    private int prendre() throws StealException{
-        return 0;
-    }
 
-    public synchronized int voler(int id, int quantite,Joueur j) throws RemoteException, StealException {
-        return 0;
+    /**
+     *
+     * @param id: id de la ressource
+     * @param quantite: quantité de ressource à voler
+     * @return la quantité réellement volée
+     * @throws StealException: vol annulé car on a été repéré
+     */
+    public synchronized int voler(int id, int quantite) throws RemoteException, StealException {
+        int result = 0;
+        int dispo = ressources.get(id);
+        if(dispo - quantite >= 0){
+            result = quantite;
+        }else{
+            result = dispo;
+        }
+        ressources.put(id,dispo-result);
+        return result;
     }
 
 }

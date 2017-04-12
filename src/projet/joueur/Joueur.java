@@ -18,5 +18,5 @@ public interface  Joueur extends Remote{
     boolean ajouteFin(String rmi) throws RemoteException;
     void setRules(int n,boolean canSteal,boolean isEpuisable)throws RemoteException;
     void start() throws RemoteException;
-    int voler(int id,int quantite,Joueur j) throws RemoteException,StealException;
+    int voler(int id,int quantite) throws RemoteException,StealException;
 }
