@@ -62,7 +62,7 @@
 								<ul class="dropdown-menu">
 
 									<li>
-										<a href="#producer" data-toggle="tab">Total</a>
+										<a href="#producer" data-toggle="tab" onclick="removeHidden()">Total</a>
 									</li>
 
 									<li>
@@ -88,85 +88,85 @@
 							<div class="tab-pane active" id="player">
 								<h3>Evolution des ressources totales des joueurs</h3>
 								<br>
-								<div id="totalPlayerChart" style="height: 300px;"></div>
+								<div id="totalPlayerChart" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="player1">
 								<h3>Evolution des ressources du joueur 1</h3>
 								<br>
-								<div id="playerChart1" style="height: 300px;"></div>
+								<div id="playerChart1" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="player2">
 								<h3>Evolution des ressources du joueur 2</h3>
 								<br>
-								<div id="playerChart2" style="height: 300px;"></div>
+								<div id="playerChart2" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="player3">
 								<h3>Evolution des ressources du joueur 3</h3>
 								<br>
-								<div id="playerChart3" style="height: 300px;"></div>
+								<div id="playerChart3" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="player4">
 								<h3>Evolution des ressources du joueur 4</h3>
 								<br>
-								<div id="playerChart4" style="height: 300px;"></div>
+								<div id="playerChart4" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="player5">
 								<h3>Evolution des ressources du joueur 5</h3>
 								<br>
-								<div id="playerChart5" style="height: 300px;"></div>
+								<div id="playerChart5" style="height: 500px;"></div>
 								<br>
 							</div>
 
 <!-- PRODUCTEURS -->
-							<div class="tab-pane" id="producer">
+							<div class="tab-pane active" id="producer" style="visibility:hidden">
 								<h3>Evolution des ressources totales des producteurs</h3>
 								<br>
-								<div id="totalProducerChart" style="height: 300px;"></div>
+								<div id="totalProducerChart" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="producer1">
 								<h3>Evolution des ressources du producteur 1</h3>
 								<br>
-								<div id="producerChart1" style="height: 300px;"></div>
+								<div id="producerChart1" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="producer2">
 								<h3>Evolution des ressources du producteur 2</h3>
 								<br>
-								<div id="producerChart2" style="height: 300px;"></div>
+								<div id="producerChart2" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="producer3">
 								<h3>Evolution des ressources du producteur 3</h3>
 								<br>
-								<div id="producerChart3" style="height: 300px;"></div>
+								<div id="producerChart3" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="producer4">
 								<h3>Evolution des ressources du producteur 4</h3>
 								<br>
-								<div id="producerChart4" style="height: 300px;"></div>
+								<div id="producerChart4" style="height: 500px;"></div>
 								<br>
 							</div>
 
 							<div class="tab-pane" id="producer5">
 								<h3>Evolution des ressources du producteur 5</h3>
 								<br>
-								<div id="producerChart5" style="height: 300px;"></div>
+								<div id="producerChart5" style="height: 500px;"></div>
 								<br>
 							</div>
 
@@ -177,32 +177,48 @@
 		</div>
 	</div>
 
+	<script tupe="text/javascript">
+		function removeHidden() {
+			$("#producer").css({'visibility':'visible'});
+		}
+	</script>
+
 	<script type="text/javascript">
 		google.charts.load('current', {'packages':['corechart']});
 		google.charts.setOnLoadCallback(drawTotalPlayerChart);
 		google.charts.setOnLoadCallback(drawTotalProducerChart);
 
 		function drawTotalPlayerChart() {
-			var data = google.visualization.arrayToDataTable([["Time","Joueur 1","Joueur 2","Joueur 3","Joueur 4","Joueur 5"],["",4,16,12,11,2],["",21,28,11,18,19],["",38,27,36,21,33],["",37,46,34,47,30],["",59,43,55,49,54],["",55,64,52,69,66]]);
+			var data = google.visualization.arrayToDataTable([["Time","Joueur 1","Joueur 2","Joueur 3","Joueur 4","Joueur 5","Objectif"],[0,6,7,7,17,16,55],[1,29,20,18,11,26,55],[2,30,39,24,31,39,55],[3,37,42,41,40,47,55],[4,47,50,48,59,48,55],[5,68,66,67,66,58,55]]);
 			var options = {
 				title: '',
-				hAxis: {title: '',  titleTextStyle: {color: '#333'}},
+				height:450,
+				curveType: 'function',
+				animation:{ duration: 750, easing: 'out', startup: true},
+				hAxis: {title: '',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},
 				vAxis: {minValue: 0},
 				isStacked : true,
-				legend: {position: 'bottom'}			};
-			var chart = new google.visualization.AreaChart(document.getElementById('totalPlayerChart'));
+				legend: {position: 'bottom'},
+				series:{5: {lineWidth:4, color: '#e2431e'}}
+			};
+			var chart = new google.visualization.LineChart(document.getElementById('totalPlayerChart'));
 			chart.draw(data, options);
 		}
 
 		function drawTotalProducerChart() {
-			var data = google.visualization.arrayToDataTable([["Time","Producteur 1","Producteur 2","Producteur 3","Producteur 4","Producteur 5"],["",1,14,14,2,6],["",14,11,29,17,25],["",38,24,35,32,35],["",42,33,41,35,47],["",45,58,54,52,54],["",65,64,51,66,59]]);
+			var data = google.visualization.arrayToDataTable([["Time","Producteur 1","Producteur 2","Producteur 3","Producteur 4","Producteur 5"],[0,17,4,19,8,8],[1,21,17,29,18,12],[2,37,23,39,24,20],[3,31,46,46,36,35],[4,47,40,51,47,53],[5,69,51,63,69,67]]);
 			var options = {
 				title: '',
-				hAxis: {title: '',  titleTextStyle: {color: '#333'}},
+				height:450,
+				curveType: 'function',
+				animation:{ duration: 750, easing: 'out', startup: true},
+				hAxis: {title: '',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},
 				vAxis: {minValue: 0},
 				isStacked : true,
-				legend: {position: 'bottom'}			};
-			var chart = new google.visualization.AreaChart(document.getElementById('totalProducerChart'));
+				legend: {position: 'bottom'},
+				series:{5: {lineWidth:4, color: '#e2431e'}}
+			};
+			var chart = new google.visualization.LineChart(document.getElementById('totalProducerChart'));
 			chart.draw(data, options);
 		}
 
