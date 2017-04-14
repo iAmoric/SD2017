@@ -1,5 +1,6 @@
 package projet.joueur;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -24,7 +25,9 @@ public class LancerJoueur {
             //s'enregistrer chez Starter
         }
         catch (RemoteException re) { System.out.println(re) ; }
-        catch (MalformedURLException e) { System.out.println(e) ; }
+        catch (MalformedURLException e) { System.out.println(e) ; } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
