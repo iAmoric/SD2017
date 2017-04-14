@@ -30,3 +30,25 @@ TODO LIST:
 	->faire l'observation du système
 	->améliorer les informations dans les log
 	->faire la récupération des fichiers log par le coordinateur End
+
+
+
+
+Nouveau format fichier log :
+
+JOUEUR
+nomDuJoueur
+ACTIONS
+date typeAction
+...
+date typeAction
+
+
+#############
+typeAction :
+    get idPro idRes QteDemande QteRecu nbRes1 ... nbResN
+    ...
+
+
+
+

@@ -18,11 +18,11 @@ public class LogGeneratorTest {
         int total3 = 0;
         int total4 = 0;
         int total5 = 0;
-        int target1 = 250;
-        int target2 = 200;
-        int target3 = 300;
-        int target4 = 250;
-        int target5 = 200;
+        int target1 = 300;
+        int target2 = 225;
+        int target3 = 200;
+        int target4 = 350;
+        int target5 = 275;
 
         int cpt;
 
@@ -55,7 +55,7 @@ public class LogGeneratorTest {
                                     recu = r.nextInt(demande);
                                 }
                                 total1 += recu;
-                                w.println(cpt + " get " + (k+1) + " " + demande + " " + recu + " " + 5 +
+                                w.println(cpt + " get " + (r.nextInt(3)+1) + " " +(k+1) + " " + demande + " " + recu +
                                         " " + total1 + " " + total2 + " " + total3 + " " + total4 + " " + total5);
                             }
                             else{
@@ -73,7 +73,7 @@ public class LogGeneratorTest {
                                     recu = r.nextInt(demande)+1;
                                 }
                                 total2 += recu;
-                                w.println(cpt + " get " + (k+1) + " " + demande + " " + recu + " " + 5 +
+                                w.println(cpt + " get " + (r.nextInt(3)+1) + " " +(k+1) + " " + demande + " " + recu +
                                         " " + total1 + " " + total2 + " " + total3 + " " + total4 + " " + total5);
                             }
                             else{
@@ -91,7 +91,7 @@ public class LogGeneratorTest {
                                     recu = r.nextInt(demande)+1;
                                 }
                                 total3 += recu;
-                                w.println(cpt + " get " + (k+1) + " " + demande + " " + recu + " " + 5 +
+                                w.println(cpt + " get " + (r.nextInt(3)+1) + " " +(k+1) + " " + demande + " " + recu +
                                         " " + total1 + " " + total2 + " " + total3 + " " + total4 + " " + total5);
                             }
                             else{
@@ -109,7 +109,7 @@ public class LogGeneratorTest {
                                     recu = r.nextInt(demande)+1;
                                 }
                                 total4 += recu;
-                                w.println(cpt + " get " + (k+1) + " " + demande + " " + recu + " " + 5 +
+                                w.println(cpt + " get " + (r.nextInt(3)+1) + " " +(k+1) + " " + demande + " " + recu +
                                         " " + total1 + " " + total2 + " " + total3 + " " + total4 + " " + total5);
                             }
                             else{
@@ -127,7 +127,7 @@ public class LogGeneratorTest {
                                     recu = r.nextInt(50)+1;
                                 }
                                 total5 += recu;
-                                w.println(cpt + " get " + (k+1) + " " + demande + " " + recu + " " + 5 +
+                                w.println(cpt + " get " + (r.nextInt(3)+1) + " " +(k+1) + " " + demande + " " + recu +
                                         " " + total1 + " " + total2 + " " + total3 + " " + total4 + " " + total5);
                             }
                             else{

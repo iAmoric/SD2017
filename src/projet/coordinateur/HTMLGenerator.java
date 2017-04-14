@@ -1,6 +1,9 @@
 package projet.coordinateur;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import org.json.simple.JSONArray;
@@ -40,7 +43,8 @@ public class HTMLGenerator {
         jsonObjectMain = new JSONObject();
 
         try {
-            parseLogFiles();
+            parseTotalLogFiles();
+            parsePlayerLogFiles();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,7 +62,7 @@ public class HTMLGenerator {
      *  + Nombre de joueurs
      *  + Nombre de producteurs (si on fait un fichier de log pour les producteurs)
      */
-    public void parseLogFiles() throws IOException {
+    public void parsePlayerLogFiles() throws IOException {
 
         String ressources[] =  {"pétrole","or", "gaz naturel", "bois", "pierre"};
         for (int i = nbJoueurs-1; i >= 0; i--){
@@ -77,7 +81,6 @@ public class HTMLGenerator {
 
             line = reader.readLine();
             if (line.equals("ACTIONS")){
-
 
                 jsonPlayer.add("Time");
                 for (int j = 0; j < ressources.length; j++){
@@ -100,14 +103,101 @@ public class HTMLGenerator {
                 }
             }
 
-            //System.out.println(jsonPlayerMain);
             jsonObjectMain.put(playerName, jsonPlayerMain);
+
+            reader.close();
         }
-        System.out.println(jsonObjectMain);
     }
 
+    public void parseTotalLogFiles() throws IOException {
 
-    public void createPlayerJsonArray() {
+        BufferedReader[] readers = new BufferedReader[nbJoueurs];
+        String line;
+        JSONArray jsonMain = new JSONArray();
+        JSONArray json = new JSONArray();
+
+        for (int i = 0; i < nbJoueurs; i++){
+            File file = new File("log_"+i+".txt");
+            readers[i] = new BufferedReader(new FileReader(file));
+        }
+
+        json.add("Time");
+        for (int i = 0; i < readers.length; i++){
+            line = readers[i].readLine();
+            if (line.equals("JOUEUR")){
+                line = readers[i].readLine();
+                int n = Integer.parseInt(line.substring(line.length() - 1));
+                String playerName = "Joueur " + (n+1);
+                json.add(playerName);
+            }
+        }
+        jsonMain.add(json);
+
+
+        for(BufferedReader reader: readers){
+            reader.readLine(); // ACTIONS
+        }
+
+        boolean noMoreLine = false;
+
+        boolean[] hasLineArray= new boolean[nbJoueurs];
+        for (int i = 0; i < hasLineArray.length; i++){
+            hasLineArray[i] = true;
+        }
+
+        int[] lastSum = new int[nbJoueurs];
+
+        int cpt = 0;
+        while (!noMoreLine){
+            cpt++;
+            json = new JSONArray();
+            json.add(cpt);
+            boolean tmpNoMoreLine = false;
+            for (int i = 0; i < readers.length; i++){
+                line = readers[i].readLine();
+                if (line == null){
+                    hasLineArray[i] = false;
+
+                    boolean continu = false;
+                    for (int j = 0; j < hasLineArray.length; j++){
+                        if (hasLineArray[j]){
+                            continu = true;
+                        }
+                    }
+
+                    if (continu)
+                        tmpNoMoreLine = false;
+                    else
+                        tmpNoMoreLine = true;
+
+                    if (!tmpNoMoreLine){
+                        json.add((lastSum[i]));
+                    }
+                }
+                else {
+                    String[] words = line.split(" ");
+                    int sum = 0;
+                    for (int j = 6; j < words.length; j++){
+                        sum += Integer.parseInt(words[j]);
+                    }
+                    lastSum[i] = sum;
+                    //System.out.println("Sum " + i + " : " + lastSum[i]);
+                    json.add(sum);
+                }
+            }
+            noMoreLine = tmpNoMoreLine;
+            jsonMain.add(json);
+        }
+
+        jsonMain.remove(jsonMain.size()-1);
+        jsonObjectMain.put("TotalPlayer", jsonMain);
+
+        for (int i = 0; i < readers.length; i++){
+            readers[i].close();
+        }
+    }
+
+    /*public void createPlayerJsonArray() {
         playerJsonMain = new JSONArray();
         for (int j = 0; j < nbResources ; j++) {
             playerJson = new JSONArray();
@@ -136,9 +226,9 @@ public class HTMLGenerator {
             playerJsonMain.add(playerJson);
             jsonObjectMain.put("totalPlayer", playerJsonMain);
         }
-    }
+    }*/
 
-    public void createProducerJsonArray() {
+    /*public void createProducerJsonArray() {
         producerJsonMain = new JSONArray();
         for (int j = 0; j < nbResources ; j++) {
             producerJson = new JSONArray();
@@ -160,7 +250,7 @@ public class HTMLGenerator {
             producerJsonMain.add(producerJson);
         }
         jsonObjectMain.put("totalProducer", producerJsonMain);
-    }
+    }*/
 
     public void createHtmlFile() {
 
@@ -288,33 +378,30 @@ public class HTMLGenerator {
                         "\t\t</div>\n" +
                         "\t</div>\n");
 
-            /*w.println(  "\t<script type=\"text/javascript\">\n" +
-                        "\t\tgoogle.charts.load('current', {'packages':['corechart']});\n" +
-                        "\t\tgoogle.charts.setOnLoadCallback(drawTotalPlayerChart);\n" +
-                        "\t\tgoogle.charts.setOnLoadCallback(drawTotalProducerChart);\n");*/
-
             w.println(  "\t<script type=\"text/javascript\">\n" +
-                        "\t\tgoogle.charts.load('current', {'packages':['corechart']});\n");
+                        "\t\tgoogle.charts.load('current', {'packages':['corechart']});\n" +
+                        "\t\tgoogle.charts.setOnLoadCallback(drawTotalPlayerChart);\n" /*+*/
+                        /*"\t\tgoogle.charts.setOnLoadCallback(drawTotalProducerChart);\n"*/);
 
             for (int i = 0; i < nbJoueurs; i++){
                 w.println("\t\tgoogle.charts.setOnLoadCallback(drawPlayer"+i+"Chart);");
             }
 
-            /*w.println(  "\t\tfunction drawTotalPlayerChart() {\n" +
-                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObjectMain.get("totalPlayer") + ");\n" +
+            w.println(  "\t\tfunction drawTotalPlayerChart() {\n" +
+                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObjectMain.get("TotalPlayer") + ");\n" +
                         "\t\t\tvar options = {\n" +
                         "\t\t\t\ttitle: '',\n" +
                         "\t\t\t\theight:450,\n" +
                         "\t\t\t\twidth:1100,\n" +
                         //"\t\t\t\tcurveType: 'function',\n" +
                         "\t\t\t\tanimation:{ duration: 750, easing: 'out', startup: true},\n" +
-                        "\t\t\t\thAxis: {title: '',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
-                        "\t\t\t\tvAxis: {minValue: 0},\n" +
+                        "\t\t\t\thAxis: {title: 'temps',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
+                        "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
                         "\t\t\t\tseries:{"+nbJoueurs+": {lineWidth:4, color: '#e2431e'}}\n" +
                         "\t\t\t};\n" +
                         "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('totalPlayerChart'));\n" +
                         "\t\t\tchart.draw(data, options);\n" +
-                        "\t\t}\n");*/
+                        "\t\t}\n");
 
             for (int i = 0; i < nbJoueurs; i++){
                 w.println(  "\t\tfunction drawPlayer"+i+"Chart() {\n" +
@@ -324,8 +411,8 @@ public class HTMLGenerator {
                         "\t\t\t\theight:450,\n" +
                         "\t\t\t\twidth:1100,\n" +
                         "\t\t\t\tanimation:{ duration: 750, easing: 'out', startup: true},\n" +
-                        "\t\t\t\thAxis: {title: '',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
-                        "\t\t\t\tvAxis: {minValue: 0},\n" +
+                        "\t\t\t\thAxis: {title: 'temps',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
+                        "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
                         "\t\t\t};\n" +
                         "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('playerChart"+(i+1)+"'));\n" +
                         "\t\t\tchart.draw(data, options);\n" +
