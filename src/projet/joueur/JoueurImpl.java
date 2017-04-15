@@ -245,6 +245,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return new HashMap<Integer, Integer>(ressources);
     }
 
+    /**
+     * @return une ligne du fichier de log
+     * @throws IOException
+     */
     @Override
     public String readLog() throws IOException {
         if(logReader == null){

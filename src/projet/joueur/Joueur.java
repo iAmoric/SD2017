@@ -2,7 +2,6 @@ package projet.joueur;
 
 import projet.exceptions.StealException;
 
-import java.io.File;
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

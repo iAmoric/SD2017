@@ -102,7 +102,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
     /**
      * Télécharge le fichier de log du joueur i
      * @param i
-     * @return
+     * @return le fichier
      */
     private File getFile(int i) throws IOException {
         int chunkSize  = 100;
