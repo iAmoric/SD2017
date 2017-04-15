@@ -37,10 +37,13 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private File log;
     private boolean haveFinished = false;
     private boolean isPlaying = false;//vrai si on a lancé un ThreadJoueur avec ce joueur
+    private BufferedReader logReader = null;
 
     public JoueurImpl(String nomLog) throws IOException {
         super();
         log = new File(nomLog);
+        log.delete();
+        log.createNewFile();
         writer = new BufferedWriter(new FileWriter(log));
         mapRessourceProducteurs = new HashMap<Integer, List<Producteur>>();
         ressources = new HashMap<Integer,Integer>();
@@ -151,7 +154,6 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         for (int i :mapRessourceProducteurs.keySet()){
             os.println("id/possedé (nbProducteur) "+i+"/"+ressources.get(i)+"("+mapRessourceProducteurs.get(i).size()+")");
         }
-
         os.println("Objectifs");
         if(doSum){
             os.println(sumObjectif+" ressources au total");
@@ -175,9 +177,8 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             if(obtenue != -1){
                 total = obtenue + ressources.get(idRessource);
                 ressources.put(idRessource,total);
-                writer.write("PRENDRE "+index+" "+idRessource+" "+quantite+" "+obtenue+" "+total);
-                writer.newLine();
-
+                writer.write("PRENDRE "+index+" "+idRessource+" "+quantite+" "+obtenue+" "+total+"\n");
+                writer.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -219,7 +220,6 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     }
 
     /**
-     *
      * @param id: id de la ressource
      * @param quantite: quantité de ressource à voler
      * @return la quantité réellement volée
@@ -245,16 +245,23 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return new HashMap<Integer, Integer>(ressources);
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public String readLog() throws IOException {
+        if(logReader == null){
+            try {
+                logReader = new BufferedReader(new FileReader(log));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return logReader.readLine();
     }
 
     /**
-     * récupérer le log de la partie
-     * @return le fichier
+     *
      */
-    public File log() throws RemoteException{
-        return log;
-    }
+    public int getId() {return id;}
+
+
 
 }

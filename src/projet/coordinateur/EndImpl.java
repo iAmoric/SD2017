@@ -3,7 +3,7 @@ package projet.coordinateur;
 import projet.joueur.Joueur;
 import projet.producteur.Producteur;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -73,18 +73,55 @@ public class EndImpl extends UnicastRemoteObject implements End {
         }
         //Si oui alors on donne l'ordre au producteur de s'arreter
         if(partieTermine){
-            finDePartie();
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        finDePartie();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
         }
     }
 
-    public void finDePartie() throws RemoteException {
+    public void finDePartie() throws IOException {
         int i;
         System.err.println("La partie est terminé");
-        for (i = 0;i<producteurs.length;i++){
+        /*for (i = 0;i<producteurs.length;i++){
             producteurs[i].stopProduction();
-        }
+        }*/
         for( i = 0;i<joueurs.length;i++){
-            logs[i] = joueurs[i].log();
+            System.err.println("Recupération du log"+i);
+            logs[i] = getFile(i);
         }
+    }
+
+    /**
+     * Télécharge le fichier de log du joueur i
+     * @param i
+     * @return
+     */
+    private File getFile(int i) throws IOException {
+        int chunkSize  = 100;
+        char[] buffer = new char[chunkSize];
+        int read;
+        String ligne;
+        int total = 0;
+        File file = new File("test"+i);
+        file.delete();
+        file.createNewFile();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        do{
+            ligne = joueurs[i].readLog();
+            if(ligne!=null){
+                // System.err.println(ligne);
+                writer.write(ligne+'\n');
+            }
+        }while (ligne != null );
+        writer.flush();
+        return file;
     }
 }

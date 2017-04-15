@@ -53,7 +53,7 @@ public class ThreadJoueur extends Thread {
                 objectif = objectifs.get(i);
                 haveAObjectif = true;
             }
-            index = clefRessourceProducteurs.get(i).size();
+            index = loto.nextInt(clefRessourceProducteurs.get(i).size());
             retour = j.getRessource(index,i,k);
             if(retour>=objectif){
                 haveAObjectif = false;

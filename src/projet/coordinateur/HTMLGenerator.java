@@ -1,10 +1,6 @@
 package projet.coordinateur;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Random;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

@@ -3,6 +3,7 @@ package projet.joueur;
 import projet.exceptions.StealException;
 
 import java.io.File;
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -21,5 +22,5 @@ public interface  Joueur extends Remote{
     void start() throws RemoteException;
     int voler(int id,int quantite) throws RemoteException,StealException;
     Map<Integer,Integer> observe() throws RemoteException;
-    File log() throws RemoteException;
+    String readLog() throws IOException;
 }
