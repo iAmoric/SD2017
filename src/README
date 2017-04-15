@@ -36,9 +36,7 @@ TODO LIST:
 
 Nouveau format fichier log :
 
-JOUEUR
 nomDuJoueur
-ACTIONS
 date typeAction
 ...
 date typeAction

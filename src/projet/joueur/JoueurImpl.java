@@ -1,6 +1,6 @@
 package projet.joueur;
 
-import org.omg.PortableInterceptor.INACTIVE;
+//import org.omg.PortableInterceptor.INACTIVE;
 import projet.coordinateur.End;
 import projet.exceptions.StealException;
 import projet.producteur.Producteur;
