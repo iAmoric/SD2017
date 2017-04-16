@@ -96,14 +96,12 @@ public class ThreadJoueur extends Thread {
                     //On a récupéré moins de ressource que demandé
                     haveAProducteur = false;
                     vole = true;
-                    System.err.println("Fin producteur");
                 }
             }else{
                 try {
                     retour = j.voleJoueur(loto.nextInt(nbAutreJouers),i,k);
                     if(retour < precedent + k){
                         vole = false;
-                        System.err.println("Fin vole");
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -113,6 +111,7 @@ public class ThreadJoueur extends Thread {
                     retour = 0;
                 }
             }
+            //System.err.println("AGGRESSIF "+retour);
             precedent = retour;
             //On a terminé l'objectif de cette ressource
             if(retour>=objectif){
@@ -142,16 +141,27 @@ public class ThreadJoueur extends Thread {
         ressourceNonTermine(ressourceNonTermine,j.getRessources());
         i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
         objectif = objectifs.get(i);
+        int precedent = 0;
         while(!j.haveFinished()){
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
                 objectif = objectifs.get(i);
                 haveAObjectif = true;
+                precedent = 0;
             }
             //Il sélectionne un producteur au hasard de cette ressource
             index = loto.nextInt(clefRessourceProducteurs.get(i).size());
             retour = j.getRessource(clefRessourceProducteurs.get(i).get(index),i,k);
+            /*if(retour < precedent + 50){
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            precedent = retour;*/
+            //System.err.println("PASSIF "+retour);
             if(retour>=objectif){
                 haveAObjectif = false;
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());

@@ -59,9 +59,21 @@ public class EndImpl extends UnicastRemoteObject implements End {
      */
     public synchronized void haveFinished(int id) throws RemoteException {
         boolean partieTermine = true;
-        int i;
         joueursEnPartie[id] = false;
+        int i;
         System.err.println("Le joueur "+id+" a terminé");
+        //On récup_re directement le log du joueur qui a terminé
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    logs[id] = getFile(id);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
 
         //On vérifie si tout les joueurs ont terminé
         for(i = 0;i<joueursEnPartie.length;i++){
@@ -73,7 +85,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
         }
         //Si oui alors on donne l'ordre au producteur de s'arreter
         if(partieTermine){
-            Thread t = new Thread(new Runnable() {
+            t = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -87,16 +99,13 @@ public class EndImpl extends UnicastRemoteObject implements End {
         }
     }
 
+
     public void finDePartie() throws IOException {
         int i;
         System.err.println("La partie est terminé");
         /*for (i = 0;i<producteurs.length;i++){
             producteurs[i].stopProduction();
         }*/
-        for( i = 0;i<joueurs.length;i++){
-            System.err.println("Recupération du log"+i);
-            logs[i] = getFile(i);
-        }
     }
 
     /**
