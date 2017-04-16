@@ -1,5 +1,6 @@
 package projet.joueur;
 
+import projet.exceptions.StealException;
 import projet.producteur.Producteur;
 
 import java.rmi.RemoteException;
@@ -15,20 +16,114 @@ import java.util.*;
 public class ThreadJoueur extends Thread {
     private JoueurImpl j;
     private Map<Integer,Integer> objectifs;
-    private Map<Integer,List<Producteur>> clefRessourceProducteurs;
+    private Map<Integer,List<Integer>> clefRessourceProducteurs;
     private Random loto = new Random();
     private int k;
+    private Comportement comportement;
 
     public ThreadJoueur(JoueurImpl j){
         this.j = j;
         k = j.getNbRessourcePrenable();
+        this.comportement = j.getComportement();
         objectifs = j.getObjectifs();
         clefRessourceProducteurs = j.getListProducteur();
     }
     
     public void run(){
-        tour();
+        switch (comportement){
+            case PASSIF:
+                tourPassif();
+                break;
+            case AGGRESIF:
+                if(j.canSteal()){
+                    tourAggresifAvecVole();
+                }else{
+                    tourAggresifSansVole();
+                }
+
+                break;
+            case JOUEUR:
+                tourJoueur();
+                break;
+        }
         System.err.println("Terminé Joueur "+j.getId());
+    }
+
+    private void tourJoueur() {
+        //TODO il faut faire un coordinateur de tour par tour
+    }
+
+    /**
+     * Comportement de IA Aggresive avec le vole
+     * -l'IA cherche à accomplir l'objectif d'une ressource
+     *    elle alterne entre épuisser les ressources d'un producteur et épuisser les ressources d'un joueur
+     *
+     */
+    private void tourAggresifAvecVole() {
+        List<Integer> ressourceNonTermine = new ArrayList<Integer>();
+        int i;
+        boolean haveAObjectif = false;
+        int nbAutreJouers = j.autreJoueurs();
+        int objectif;
+        int retour;
+        int index;
+        int indexProducteur = 0;//L'index du producteur dans Producteur[]
+        boolean haveAProducteur = false;//Le producteur que le jp
+        boolean vole = false;
+        ressourceNonTermine(ressourceNonTermine,j.getRessources());
+        i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+        objectif = objectifs.get(i);
+        int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
+        while(!j.haveFinished()){
+            //Le joueur choisie une ressource qu'il va compléter
+            if(!haveAObjectif){
+                i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+                objectif = objectifs.get(i);
+                haveAObjectif = true;
+                vole = false;
+                haveAProducteur = false;
+                precedent = 0;
+            }
+            //L'IA selectionne un producteur
+            if(!haveAProducteur && !vole){
+                index = loto.nextInt(clefRessourceProducteurs.get(i).size());
+                indexProducteur = clefRessourceProducteurs.get(i).get(index);
+                haveAProducteur = true;
+            }
+            if(haveAProducteur){
+                retour = j.getRessource(indexProducteur,i,k);
+                if(retour < precedent + k){
+                    //On a récupéré moins de ressource que demandé
+                    haveAProducteur = false;
+                    vole = true;
+                    System.err.println("Fin producteur");
+                }
+            }else{
+                try {
+                    retour = j.voleJoueur(loto.nextInt(nbAutreJouers),i,k);
+                    if(retour < precedent + k){
+                        vole = false;
+                        System.err.println("Fin vole");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (StealException e) {
+                    e.printStackTrace();
+                } finally {
+                    retour = 0;
+                }
+            }
+            precedent = retour;
+            //On a terminé l'objectif de cette ressource
+            if(retour>=objectif){
+                haveAObjectif = false;
+                ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
+            }
+        }
+    }
+
+    private void tourAggresifSansVole(){
+
     }
 
     /**
@@ -37,7 +132,7 @@ public class ThreadJoueur extends Thread {
      * -prend des unité de cette ressource jusqu'a atteindre l'objectif
      * -jusqu'a avoir atteint l'objectif sur toutes les ressources
      * */
-    private void tour(){
+    private void tourPassif(){
         List<Integer> ressourceNonTermine = new ArrayList<Integer>();
         int i;
         boolean haveAObjectif = false;
@@ -48,13 +143,15 @@ public class ThreadJoueur extends Thread {
         i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
+            //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
                 objectif = objectifs.get(i);
                 haveAObjectif = true;
             }
+            //Il sélectionne un producteur au hasard de cette ressource
             index = loto.nextInt(clefRessourceProducteurs.get(i).size());
-            retour = j.getRessource(index,i,k);
+            retour = j.getRessource(clefRessourceProducteurs.get(i).get(index),i,k);
             if(retour>=objectif){
                 haveAObjectif = false;
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());

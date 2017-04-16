@@ -25,7 +25,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Joueur[] joueurs;//liste des joueurs
     private End finDePartie;
     private int id;//indice du joueur dans le tableau
-    private Map<Integer,List<Producteur>> mapRessourceProducteurs;
+    private Map<Integer,List<Integer>> mapRessourceProducteurs;
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
     private int nbRessourcePrenable;//nb de ressource récupérable en une fois chez un producteur
@@ -37,15 +37,18 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private File log;
     private boolean haveFinished = false;
     private boolean isPlaying = false;//vrai si on a lancé un ThreadJoueur avec ce joueur
+    private boolean modeAntiVoleActive = false;
     private BufferedReader logReader = null;
+    private Comportement comportement;
 
-    public JoueurImpl(String nomLog) throws IOException {
+    public JoueurImpl(String nomLog,Comportement comportement) throws IOException {
         super();
+        this.comportement = comportement;
         log = new File(nomLog);
         log.delete();
         log.createNewFile();
         writer = new BufferedWriter(new FileWriter(log));
-        mapRessourceProducteurs = new HashMap<Integer, List<Producteur>>();
+        mapRessourceProducteurs = new HashMap<Integer, List<Integer>>();
         ressources = new HashMap<Integer,Integer>();
     }
 
@@ -92,7 +95,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         for (int i = 0;i<rmi.length;i++){
             try {
                 producteurs[i] = (Producteur)Naming.lookup(rmi[i]);
-                whatDoHeProduce(producteurs[i]);
+                whatDoHeProduce(i);
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -133,17 +136,17 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      * Permet de connaitre les ressources que produit le producteur
      * et de l'ajouter dans la liste des producteurs qui produisent ces ressources
      * (il est possible qu'un producteur produise plusieurs ressources )s
-     * @param p: un producteur
+     * @param index: l'index du producetur dans le tableau
      */
-    public void whatDoHeProduce(Producteur p) throws RemoteException {
+    public void whatDoHeProduce(int index) throws RemoteException {
         int[] ressourcesProduites;
-        ressourcesProduites = p.whatDoYouProduce();
-        List<Producteur> list;
+        ressourcesProduites = producteurs[index].whatDoYouProduce();
+        List<Integer> list;
         for (int i =0;i<ressourcesProduites.length;i++){
             if((list = mapRessourceProducteurs.get(i)) == null){
-                list = new ArrayList<Producteur>();
+                list = new ArrayList<Integer>();
             }
-            list.add(p);
+            list.add(index);
             mapRessourceProducteurs.put(i,list);
         }
     }
@@ -207,7 +210,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         finDePartie.haveFinished(id);
     }
 
-    public Map<Integer,List<Producteur>> getListProducteur(){
+    public Map<Integer,List<Integer>> getListProducteur(){
         return mapRessourceProducteurs;
     }
 
@@ -227,14 +230,31 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      */
     public synchronized int voler(int id, int quantite) throws RemoteException, StealException {
         int result = 0;
-        int dispo = ressources.get(id);
-        if(dispo - quantite >= 0){
-            result = quantite;
-        }else{
-            result = dispo;
+        if(!haveFinished){
+            if(modeAntiVoleActive)throw new StealException();
+            //On ne peut pas voler un joueur qui a terminé la partie
+            int dispo = ressources.get(id);
+            if(dispo - quantite >= 0){
+                result = quantite;
+            }else{
+                result = dispo;
+            }
+            ressources.put(id,dispo-result);
         }
-        ressources.put(id,dispo-result);
         return result;
+    }
+
+    /**
+     *
+     * @param indexJoueur index du joueur dans Joueur[]
+     * @param idRessource id de la ressource à volé
+     * @param quantite quantité a voler
+     * @return nombre de ressource total
+     * @throws RemoteException
+     * @throws StealException
+     */
+    public int voleJoueur(int indexJoueur,int idRessource, int quantite) throws RemoteException, StealException {
+        return joueurs[indexJoueur].voler(idRessource,quantite);
     }
 
     /**
@@ -265,6 +285,25 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      *
      */
     public int getId() {return id;}
+
+    public Comportement getComportement(){
+        return comportement;
+    }
+
+    public boolean canSteal(){
+        return canSteal;
+    }
+
+    public boolean isEpuisable(){
+        return isEpuisable;
+    }
+
+    /**
+     * Nombre d'autre joueurs
+     */
+    public int autreJoueurs(){
+        return joueurs.length;
+    }
 
 
 

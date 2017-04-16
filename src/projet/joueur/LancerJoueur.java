@@ -15,9 +15,9 @@ public class LancerJoueur {
         try
         {
             //TODO faire des arguments: hostStarter portStarter
-            JoueurImpl impl = new JoueurImpl("logA");
+            JoueurImpl impl = new JoueurImpl("logA",Comportement.PASSIF);
             Joueur objLocal = (Joueur) impl;
-            JoueurImpl implB = new JoueurImpl("logB");
+            JoueurImpl implB = new JoueurImpl("logB",Comportement.AGGRESIF);
             Naming.rebind( "rmi://localhost:"+portRMI+"/JoueurA" ,objLocal) ;
             Joueur objLocalB = (Joueur)implB;
             Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocalB);
