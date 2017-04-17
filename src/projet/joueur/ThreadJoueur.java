@@ -18,6 +18,8 @@ public class ThreadJoueur extends Thread {
     private Map<Integer,Integer> objectifs;
     private Map<Integer,List<Integer>> clefRessourceProducteurs;
     private Random loto = new Random();
+    private boolean sum;
+    private int objectifSum;
     private int k;
     private Comportement comportement;
 
@@ -26,6 +28,8 @@ public class ThreadJoueur extends Thread {
         k = j.getNbRessourcePrenable();
         this.comportement = j.getComportement();
         objectifs = j.getObjectifs();
+        sum = j.doSum();
+        objectifSum = j.getSumObjectif();
         clefRessourceProducteurs = j.getListProducteur();
     }
     
@@ -65,27 +69,46 @@ public class ThreadJoueur extends Thread {
         boolean haveAObjectif = false;
         int nbAutreJouers = j.autreJoueurs();
         int objectif;
-        int retour;
+        int retour = 0;
         int index;
         int indexProducteur = 0;//L'index du producteur dans Producteur[]
         boolean haveAProducteur = false;//Le producteur que le jp
         boolean vole = false;
-        ressourceNonTermine(ressourceNonTermine,j.getRessources());
-        i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
-        objectif = objectifs.get(i);
+        if(sum){
+            objectif = objectifSum;
+            i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+        }else{
+            ressourceNonTermine(ressourceNonTermine,j.getRessources());
+            i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+            objectif = objectifs.get(i);
+        }
+
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
-                i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
-                objectif = objectifs.get(i);
-                haveAObjectif = true;
+                if(sum){
+                    i = 0;
+                    objectif = j.getSumObjectif();
+                }else{
+                    i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+                    objectif = objectifs.get(i);
+
+                }
+                precedent = 0;
                 vole = false;
                 haveAProducteur = false;
-                precedent = 0;
+                haveAObjectif = true;
+
             }
+
             //L'IA selectionne un producteur
             if(!haveAProducteur && !vole){
+                if(sum){
+                    //On sélectionne une ressource au hasard si on doit faire la somme
+                    i = loto.nextInt(clefRessourceProducteurs.size());
+                }
+                //ON sélectionne un producteur au hasard de cette ressource
                 index = loto.nextInt(clefRessourceProducteurs.get(i).size());
                 indexProducteur = clefRessourceProducteurs.get(i).get(index);
                 haveAProducteur = true;
@@ -113,7 +136,10 @@ public class ThreadJoueur extends Thread {
             }
             //System.err.println("AGGRESSIF "+retour);
             precedent = retour;
-            //On a terminé l'objectif de cette ressource
+            if(sum){
+                retour = j.getTotalRessource();
+            }
+            //On a terminé l'objectif de cette ressource ou l'objectif total
             if(retour>=objectif){
                 haveAObjectif = false;
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
@@ -142,6 +168,7 @@ public class ThreadJoueur extends Thread {
         i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
         objectif = objectifs.get(i);
         int precedent = 0;
+        int sommeTotal = 0;
         while(!j.haveFinished()){
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
@@ -161,6 +188,7 @@ public class ThreadJoueur extends Thread {
                 }
             }
             precedent = retour;*/
+            precedent = retour;
             //System.err.println("PASSIF "+retour);
             if(retour>=objectif){
                 haveAObjectif = false;
@@ -186,6 +214,14 @@ public class ThreadJoueur extends Thread {
                 j.stop();
             } catch (RemoteException e) {
                 e.printStackTrace();
+            }
+        }else if(sum){
+            if(j.getTotalRessource() == objectifSum){
+                try {
+                    j.stop();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return list;

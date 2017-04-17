@@ -298,6 +298,22 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return isEpuisable;
     }
 
+    public boolean doSum(){
+        return doSum;
+    }
+
+    public int getSumObjectif(){
+        return sumObjectif;
+    }
+
+    public int getTotalRessource(){
+        int result = 0;
+        for( int i:ressources.keySet()){
+            result+=ressources.get(i);
+        }
+        return result;
+    }
+
     /**
      * Nombre d'autre joueurs
      */
