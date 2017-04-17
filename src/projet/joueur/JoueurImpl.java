@@ -89,7 +89,12 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return true;
     }
 
-
+    /**
+     * Méthode pour se connecter aux producteurs
+     * @param rmi: les chaines RMI pour se connecter
+     * @return si les connections ont été réussies
+     * @throws RemoteException
+     */
     public boolean ajouteProducteurs(String[] rmi) throws RemoteException {
         producteurs = new Producteur[rmi.length];
         for (int i = 0;i<rmi.length;i++){
@@ -151,6 +156,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         }
     }
 
+    /**
+     * Méthode de DEBUG
+     * @param os un flux de sortie
+     */
     public void info(PrintStream os){
         os.println("Joueur "+id);
         os.println("Ressources:");
@@ -189,31 +198,19 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return ressources.get(idRessource);
     }
 
-    public int getNbRessourcePrenable(){
-        return nbRessourcePrenable;
-    }
-
-
-    public synchronized boolean haveFinished(){
-        return haveFinished;
-    }
-    public Map<Integer,Integer> getObjectifs(){
-        return objectifs;
-    }
-
-    public Map<Integer,Integer> getRessources(){
-        return ressources;
-    }
-
+    /**
+     * Arrete le joueur et préviens le coordinateur final de la fin de partie
+     * @throws RemoteException
+     */
     public synchronized void stop() throws RemoteException {
         haveFinished = true;
         finDePartie.haveFinished(id);
     }
 
-    public Map<Integer,List<Integer>> getListProducteur(){
-        return mapRessourceProducteurs;
-    }
-
+    /**
+     * Lance le thread de jeu du Joueur. Il n'y a qu'un seul thread par instance de Joueur
+     * @throws RemoteException
+     */
     public void start() throws RemoteException{
         if(!isPlaying){
             isPlaying = true;
@@ -281,9 +278,29 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return logReader.readLine();
     }
 
-    /**
-     *
-     */
+    //GETTERS
+    public int getNbRessourcePrenable(){
+        return nbRessourcePrenable;
+    }
+
+    public boolean haveFinished(){
+        return haveFinished;
+    }
+
+    public Map<Integer,Integer> getObjectifs(){
+        return objectifs;
+    }
+
+    public Map<Integer,Integer> getRessources(){
+        return ressources;
+    }
+
+
+
+    public Map<Integer,List<Integer>> getListProducteur(){
+        return mapRessourceProducteurs;
+    }
+
     public int getId() {return id;}
 
     public Comportement getComportement(){
@@ -306,7 +323,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return sumObjectif;
     }
 
-    public int getTotalRessource(){
+    public synchronized int getTotalRessource(){
         int result = 0;
         for( int i:ressources.keySet()){
             result+=ressources.get(i);
@@ -314,13 +331,12 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return result;
     }
 
-    /**
-     * Nombre d'autre joueurs
-     */
     public int autreJoueurs(){
         return joueurs.length;
     }
 
 
-
+    public Producteur[] getProducteurs() {
+        return producteurs;
+    }
 }

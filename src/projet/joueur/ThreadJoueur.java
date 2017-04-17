@@ -18,6 +18,7 @@ public class ThreadJoueur extends Thread {
     private Map<Integer,Integer> objectifs;
     private Map<Integer,List<Integer>> clefRessourceProducteurs;
     private Random loto = new Random();
+    private Producteur[] producteurs;
     private boolean sum;
     private int objectifSum;
     private int k;
@@ -29,6 +30,7 @@ public class ThreadJoueur extends Thread {
         this.comportement = j.getComportement();
         objectifs = j.getObjectifs();
         sum = j.doSum();
+        producteurs = j.getProducteurs();
         objectifSum = j.getSumObjectif();
         clefRessourceProducteurs = j.getListProducteur();
     }
@@ -167,35 +169,57 @@ public class ThreadJoueur extends Thread {
         ressourceNonTermine(ressourceNonTermine,j.getRessources());
         i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
         objectif = objectifs.get(i);
-        int precedent = 0;
-        int sommeTotal = 0;
         while(!j.haveFinished()){
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
-                i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
-                objectif = objectifs.get(i);
-                haveAObjectif = true;
-                precedent = 0;
-            }
-            //Il sélectionne un producteur au hasard de cette ressource
-            index = loto.nextInt(clefRessourceProducteurs.get(i).size());
-            retour = j.getRessource(clefRessourceProducteurs.get(i).get(index),i,k);
-            /*if(retour < precedent + 50){
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(sum){
+                    objectif = objectifSum;
+                }else{
+                    i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+                    objectif = objectifs.get(i);
                 }
+                haveAObjectif = true;
             }
-            precedent = retour;*/
-            precedent = retour;
+            if(sum){
+                i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+            }
+            //Il sélectionne le producteur qui possède le plus de ressource
+            try {
+                index = calculProducteur(i);
+            } catch (RemoteException e) {
+                index = clefRessourceProducteurs.get(i).get(loto.nextInt(clefRessourceProducteurs.get(i).size()));
+            }
+            retour = j.getRessource(index,i,k);
+
             //System.err.println("PASSIF "+retour);
+            if(sum){
+                retour = j.getTotalRessource();
+            }
             if(retour>=objectif){
                 haveAObjectif = false;
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
             }
         }
     }
+
+    /**
+     * Permet au joueur passif de trouver le meilleur producteur de la ressource i
+     * @return l'index du producteur dans Producteur[]
+     */
+    private int calculProducteur(int i) throws RemoteException {
+        Map<Integer,Integer> ressourceProducteur;
+        int index = 0;
+        int valMAX = -1;
+        for(int j = 0;j<producteurs.length;j++){
+            ressourceProducteur = producteurs[j].observe();
+            if(ressourceProducteur.get(i) > valMAX){
+                index = i;
+                valMAX = ressourceProducteur.get(i);
+            }
+        }
+        return index;
+    }
+
     /**
      *
      * @return une liste contenant les id des ressources dont on a pas atteint l'objectif
