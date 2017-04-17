@@ -46,7 +46,6 @@ public class ThreadJoueur extends Thread {
                 }else{
                     tourAggresifSansVole();
                 }
-
                 break;
             case JOUEUR:
                 tourJoueur();
@@ -187,11 +186,9 @@ public class ThreadJoueur extends Thread {
             try {
                 index = calculProducteur(i);
             } catch (RemoteException e) {
-                index = clefRessourceProducteurs.get(i).get(loto.nextInt(clefRessourceProducteurs.get(i).size()));
+                index = 0;
             }
             retour = j.getRessource(index,i,k);
-
-            //System.err.println("PASSIF "+retour);
             if(sum){
                 retour = j.getTotalRessource();
             }
@@ -213,7 +210,7 @@ public class ThreadJoueur extends Thread {
         for(int j = 0;j<producteurs.length;j++){
             ressourceProducteur = producteurs[j].observe();
             if(ressourceProducteur.get(i) > valMAX){
-                index = i;
+                index = j;
                 valMAX = ressourceProducteur.get(i);
             }
         }
@@ -250,4 +247,5 @@ public class ThreadJoueur extends Thread {
         }
         return list;
     }
+
 }
