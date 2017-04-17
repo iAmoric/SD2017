@@ -75,14 +75,8 @@ public class ThreadJoueur extends Thread {
         int indexProducteur = 0;//L'index du producteur dans Producteur[]
         boolean haveAProducteur = false;//Le producteur que le jp
         boolean vole = false;
-        if(sum){
-            objectif = objectifSum;
-            i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
-        }else{
-            ressourceNonTermine(ressourceNonTermine,j.getRessources());
-            i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
-            objectif = objectifs.get(i);
-        }
+        i = 0;
+        objectif = 0;
 
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
@@ -90,9 +84,9 @@ public class ThreadJoueur extends Thread {
             if(!haveAObjectif){
                 if(sum){
                     i = 0;
-                    objectif = j.getSumObjectif();
+                    objectif = objectifSum;
                 }else{
-                    i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+                    i = meilleurObjectif(j.getRessources(),objectifs);
                     objectif = objectifs.get(i);
 
                 }
@@ -130,6 +124,8 @@ public class ThreadJoueur extends Thread {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 } catch (StealException e) {
+                    punition();
+                    vole = false;
                     e.printStackTrace();
                 } finally {
                     retour = 0;
@@ -145,6 +141,17 @@ public class ThreadJoueur extends Thread {
                 haveAObjectif = false;
                 ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
             }
+        }
+    }
+
+    /**
+     * Punition quand un vole a échoué
+     */
+    private void punition() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -166,7 +173,7 @@ public class ThreadJoueur extends Thread {
         int retour;
         int index;
         ressourceNonTermine(ressourceNonTermine,j.getRessources());
-        i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+        i = meilleurObjectif(j.getRessources(),objectifs);
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
             //Le joueur choisie une ressource qu'il va compléter
@@ -174,7 +181,7 @@ public class ThreadJoueur extends Thread {
                 if(sum){
                     objectif = objectifSum;
                 }else{
-                    i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+                    i = meilleurObjectif(j.getRessources(),objectifs);
                     objectif = objectifs.get(i);
                 }
                 haveAObjectif = true;
@@ -248,4 +255,24 @@ public class ThreadJoueur extends Thread {
         return list;
     }
 
+    /**
+     * Retourne l'index de la meilleur ressource à l'instant T. La ressource où
+     * l'écart entre se qu'on possède et l'objectif est la plus grande
+     * @param ressource les ressources du joueurs
+     * @param objectif les objectifs par ressource
+     * @return le numéro de la ressource
+     */
+    private synchronized int meilleurObjectif(Map<Integer,Integer> ressource,Map<Integer,Integer> objectif){
+        int index = 0;
+        int maxDiff = 0;
+        int diffActuel = 0;
+        for(int i: objectif.keySet()){
+            diffActuel = objectif.get(i) - ressource.get(i);
+            if(diffActuel >= maxDiff){
+                index = i;
+                maxDiff = diffActuel;
+            }
+        }
+        return index;
+    }
 }
