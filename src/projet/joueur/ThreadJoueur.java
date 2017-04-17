@@ -105,7 +105,11 @@ public class ThreadJoueur extends Thread {
                 }
                 //ON sélectionne un producteur au hasard de cette ressource
                 index = loto.nextInt(clefRessourceProducteurs.get(i).size());
-                indexProducteur = clefRessourceProducteurs.get(i).get(index);
+                try {
+                    indexProducteur = calculProducteur(i);
+                } catch (RemoteException e) {
+                    indexProducteur = clefRessourceProducteurs.get(i).get(index);
+                }
                 haveAProducteur = true;
             }
             if(haveAProducteur){
@@ -156,7 +160,64 @@ public class ThreadJoueur extends Thread {
     }
 
     private void tourAggresifSansVole(){
+        List<Integer> ressourceNonTermine = new ArrayList<Integer>();
+        int i;
+        boolean haveAObjectif = false;
+        int objectif;
+        int retour = 0;
+        int index;
+        int indexProducteur = 0;//L'index du producteur dans Producteur[]
+        boolean haveAProducteur = false;//Le producteur que le jp
+        i = 0;
+        objectif = 0;
+        int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
+        while(!j.haveFinished()){
+            //Le joueur choisie une ressource qu'il va compléter
+            if(!haveAObjectif){
+                if(sum){
+                    i = 0;
+                    objectif = objectifSum;
+                }else{
+                    i = meilleurObjectif(j.getRessources(),objectifs);
+                    objectif = objectifs.get(i);
 
+                }
+                precedent = 0;
+                haveAProducteur = false;
+                haveAObjectif = true;
+            }
+
+            //L'IA selectionne un producteur
+            if(!haveAProducteur){
+                if(sum){
+                    //On sélectionne une ressource au hasard si on doit faire la somme
+                    i = loto.nextInt(clefRessourceProducteurs.size());
+                }
+                //ON sélectionne un producteur au hasard de cette ressource
+                index = loto.nextInt(clefRessourceProducteurs.get(i).size());
+                try {
+                    indexProducteur = calculProducteur(i);
+                } catch (RemoteException e) {
+                    indexProducteur = clefRessourceProducteurs.get(i).get(index);
+                }
+                haveAProducteur = true;
+            }
+            retour = j.getRessource(indexProducteur,i,k);
+            if(retour < precedent + k){
+                //On a récupéré moins de ressource que demandé
+                haveAProducteur = false;
+            }
+            //System.err.println("AGGRESSIF "+retour);
+            precedent = retour;
+            if(sum){
+                retour = j.getTotalRessource();
+            }
+            //On a terminé l'objectif de cette ressource ou l'objectif total
+            if(retour>=objectif){
+                haveAObjectif = false;
+                ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
+            }
+        }
     }
 
     /**
