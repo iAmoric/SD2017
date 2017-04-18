@@ -54,7 +54,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     }
 
 
-    public void setId(int id) {
+    public void setId(int id) throws RemoteException{
         this.id = id;
     }
 

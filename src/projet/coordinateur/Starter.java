@@ -223,7 +223,7 @@ public class Starter {
             for(int i = 0;i < producteurs.length;i++){
                 producteurs[i] = listProducteur.get(i);
                 connectionRMIProducteur[i] = listString.get(i);
-                producteurs[i].setID(i);
+                producteurs[i].setId(i);
             }
         }
 
@@ -292,7 +292,11 @@ public class Starter {
         int i;
         //Donner l'id du joueur à chaque joueur
         for(i = 0;i<joueurs.length;i++){
-            joueurs[i].setId(i); //Id du joueurs
+            try {
+                joueurs[i].setId(i); //Id du joueurs
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         //Donner l'adresse des autres joueurs au joueur ( il n'a pas besoin de connaitre l'id des autre)
         for (i =0;i<joueurs.length;i++) {

@@ -1,5 +1,6 @@
 package projet.coordinateur;
 
+import projet.Agent;
 import projet.joueur.Joueur;
 import projet.producteur.Producteur;
 
@@ -18,7 +19,8 @@ public class EndImpl extends UnicastRemoteObject implements End {
     private Producteur[] producteurs;
     private Joueur[] joueurs;//on utilisera les joueurs pour récupérer les log de la partie
     private boolean[] joueursEnPartie;
-    private File[] logs;
+    private File[] logsJoueur;
+    private File[] logsProducteur;
     protected EndImpl() throws RemoteException {
     }
 
@@ -28,7 +30,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
     public void setJoueurs(String[] rmi) throws RemoteException {
         joueurs = new Joueur[rmi.length];
         joueursEnPartie = new boolean[rmi.length];
-        logs = new File[rmi.length];
+        logsJoueur = new File[rmi.length];
         for(int i = 0;i<rmi.length;i++){
             try {
                 joueurs[i] = (Joueur) Naming.lookup(rmi[i]);
@@ -44,6 +46,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
      */
     public void setProducteurs(String[] rmi) throws RemoteException {
         producteurs = new Producteur[rmi.length];
+        logsProducteur = new File[rmi.length];
         for(int i = 0;i<rmi.length;i++){
             try {
                 producteurs[i] = (Producteur) Naming.lookup(rmi[i]);
@@ -67,7 +70,8 @@ public class EndImpl extends UnicastRemoteObject implements End {
             @Override
             public void run() {
                 try {
-                    logs[id] = getFile(id);
+                    logsJoueur[id] = new File("logFinalJoueur"+id);
+                    getFile(logsJoueur[id],joueurs[id]);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -103,34 +107,34 @@ public class EndImpl extends UnicastRemoteObject implements End {
     public void finDePartie() throws IOException {
         int i;
         System.err.println("La partie est terminé");
-        /*for (i = 0;i<producteurs.length;i++){
+        System.err.println("Récupération log des producteurs");
+        for(i = 0;i<producteurs.length;i++){
             producteurs[i].stopProduction();
-        }*/
+        }
+        for (i = 0;i<producteurs.length;i++){
+            logsProducteur[i] = new File("logFinalProducteur"+i);
+            getFile(logsProducteur[i],producteurs[i]);
+        }
+        System.err.println("FIN LOGS PRODUCTEUR");
     }
 
     /**
-     * Télécharge le fichier de log du joueur i
-     * @param i
+     * Télécharge le fichier de log d'un agent dans le fichier f
+     * @param f : le fichier de sortie
+     * @param a : un agent du système
      * @return le fichier
      */
-    private File getFile(int i) throws IOException {
-        int chunkSize  = 100;
-        char[] buffer = new char[chunkSize];
-        int read;
+    private File getFile(File f, Agent a) throws IOException {
         String ligne;
-        int total = 0;
-        File file = new File("test"+i);
-        file.delete();
-        file.createNewFile();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(f));
         do{
-            ligne = joueurs[i].readLog();
+            ligne = a.readLog();
             if(ligne!=null){
                 // System.err.println(ligne);
                 writer.write(ligne+'\n');
             }
         }while (ligne != null );
         writer.flush();
-        return file;
+        return f;
     }
 }

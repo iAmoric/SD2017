@@ -49,7 +49,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     }
 
     @Override
-    public void setID(int id) throws IOException {
+    public void setId(int id) throws IOException {
         this.id = id;
         if(log == null){
             log = new File("logProducteur"+id);
@@ -148,7 +148,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      */
     public void stopProduction()throws RemoteException{
         thread.stopWorking();
-        System.exit(0);
+        //System.exit(0);
     }
 
 
