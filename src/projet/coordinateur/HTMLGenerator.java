@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -14,21 +15,18 @@ public class HTMLGenerator {
     int nbJoueurs;
     int nbProducteurs;
     int nbResources = 5;
-    int target = 55;
     Random r;
 
     JSONObject jsonObjectMain;
-    JSONArray jsonArrayMain;
 
+    public HTMLGenerator(Map<Integer, Integer> joueurs,
+                         Map<Integer, Integer> producteurs,
+                         Map<Integer, Integer> ressources,
+                         File[] logJoueurs,
+                         File[] logProducteurs)
+    {
 
-
-    JSONArray playerJsonMain;
-    JSONArray playerJson;
-    JSONArray producerJsonMain;
-    JSONArray producerJson;
-
-    String[] playerName;
-    String[] producerName;
+    }
 
 
     public HTMLGenerator (int nbJoueurs, int nbProducteurs) {
@@ -92,7 +90,6 @@ public class HTMLGenerator {
                     jsonPlayerMain.add(jsonPlayer);
                 }
             }
-
 
             jsonObjectMain.put(playerName, jsonPlayerMain);
 
