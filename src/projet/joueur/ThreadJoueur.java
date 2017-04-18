@@ -47,11 +47,95 @@ public class ThreadJoueur extends Thread {
                     tourAggresifSansVole();
                 }
                 break;
+            case MALIN:
+                tourMalin();
+                break;
             case JOUEUR:
                 tourJoueur();
                 break;
         }
         System.err.println("Terminé Joueur "+j.getId());
+    }
+
+    /**
+     * Comportement de IA malin
+     * Similaire à l'IA passive seulement quelle repère le vole
+     */
+    private void tourMalin() {
+        List<Integer> ressourceNonTermine = new ArrayList<Integer>();
+        Map<Integer,Integer> ressourceT = new HashMap<Integer,Integer>(j.getRessources());
+        int i;
+        boolean haveAObjectif = false;
+        int objectif;
+        int retour;
+        int index;
+        ressourceNonTermine(ressourceNonTermine,j.getRessources());
+        i = meilleurObjectif(j.getRessources(),objectifs);
+        objectif = objectifs.get(i);
+        while(!j.haveFinished()){
+            if(detectionVole(ressourceT,j.getRessources())){
+                modeAntiVole(100);
+            }
+            //Le joueur choisie une ressource qu'il va compléter
+            if(!haveAObjectif){
+                if(sum){
+                    objectif = objectifSum;
+                }else{
+                    i = meilleurObjectif(j.getRessources(),objectifs);
+                    objectif = objectifs.get(i);
+                }
+                haveAObjectif = true;
+            }
+            if(sum){
+                i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
+            }
+            //Il sélectionne le producteur qui possède le plus de ressource
+            try {
+                index = calculProducteur(i);
+            } catch (RemoteException e) {
+                index = 0;
+            }
+            retour = j.getRessource(index,i,k);
+            if(sum){
+                retour = j.getTotalRessource();
+            }
+            if(retour>=objectif){
+                haveAObjectif = false;
+                ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
+            }
+            ressourceT = new HashMap<Integer,Integer>(j.getRessources());
+
+        }
+    }
+
+    /**
+     * Active le mode antivole pour i milliseconde
+     * Pendant le mode antivole il est impossible de faire une action
+     * @param i temps en milliseconde
+     */
+    private void modeAntiVole(int i) {
+        j.setModeAntiVole(true);
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        j.setModeAntiVole(false);
+    }
+
+    /**
+     * Permet de détecter si on a été volé
+     * @param ressourceT ressources possédées enregistré à un instant T
+     * @param ressources ressources possédées actuellement
+     * @return vrai si une valeur de ressources est inférieur à la valeur enregistrer dans ressource T
+     */
+    private boolean detectionVole(Map<Integer, Integer> ressourceT, Map<Integer, Integer> ressources) {
+        for(int i:ressourceT.keySet()){
+            if(ressources.get(i) < ressourceT.get(i)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void tourJoueur() {
@@ -130,7 +214,7 @@ public class ThreadJoueur extends Thread {
                 } catch (StealException e) {
                     punition();
                     vole = false;
-                    e.printStackTrace();
+                    System.err.println(e.getMessage());
                 } finally {
                     retour = 0;
                 }

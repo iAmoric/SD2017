@@ -7,5 +7,6 @@ package projet.joueur;
 public enum Comportement {
     PASSIF,
     AGGRESIF,
-    JOUEUR
+    JOUEUR,
+    MALIN
 }

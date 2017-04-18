@@ -335,8 +335,12 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return joueurs.length;
     }
 
-
     public Producteur[] getProducteurs() {
         return producteurs;
+    }
+
+    //SETTERS
+    public void setModeAntiVole(boolean modeAntiVoleActive){
+        this.modeAntiVoleActive = modeAntiVoleActive;
     }
 }
