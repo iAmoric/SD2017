@@ -28,6 +28,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Map<Integer,List<Integer>> mapRessourceProducteurs;
     private Map<Integer,Integer> ressources;
     private Map<Integer,Integer> objectifs;
+    private List<Integer> ressourceOrdonnee;//id des ressources dans l'ordre croissant
     private int nbRessourcePrenable;//nb de ressource récupérable en une fois chez un producteur
     private boolean doSum = false;
     private int sumObjectif;
@@ -63,6 +64,8 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         for(int i:objectif.keySet()){
             ressources.put(i,0);
         }
+        ressourceOrdonnee = new ArrayList<Integer>(ressources.keySet());
+        Collections.sort(ressourceOrdonnee);
         this.doSum = doSum;
         sumObjectif = sum;
     }
@@ -189,7 +192,11 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             if(obtenue != -1){
                 total = obtenue + ressources.get(idRessource);
                 ressources.put(idRessource,total);
-                writer.write("PRENDRE "+index+" "+idRessource+" "+quantite+" "+obtenue+" "+total+"\n");
+                writer.write("0 get "+index+" "+idRessource+" "+quantite+" "+obtenue);
+                for(int i:ressourceOrdonnee){
+                    writer.write(" "+ressources.get(i));
+                }
+                writer.write("\n");
                 writer.flush();
             }
         } catch (IOException e) {
