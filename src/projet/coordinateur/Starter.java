@@ -223,6 +223,7 @@ public class Starter {
             for(int i = 0;i < producteurs.length;i++){
                 producteurs[i] = listProducteur.get(i);
                 connectionRMIProducteur[i] = listString.get(i);
+                producteurs[i].setID(i);
             }
         }
 

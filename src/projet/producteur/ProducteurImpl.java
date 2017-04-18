@@ -1,6 +1,6 @@
 package projet.producteur;
 
-import java.io.PrintStream;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -17,6 +17,10 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     private boolean isRessourceEpuisable;
     private int k;
     private ThreadRessource thread;
+    private int id;
+    private File log;
+    private BufferedWriter writer;
+    private BufferedReader logReader;
 
     public ProducteurImpl() throws RemoteException{
         super();
@@ -43,6 +47,16 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
             }
         }
     }
+
+    @Override
+    public void setID(int id) throws IOException {
+        this.id = id;
+        if(log == null){
+            log = new File("logProducteur"+id);
+            writer = new BufferedWriter(new FileWriter(log));
+        }
+    }
+
     /**
      * Permet de recuperer des exemplaires de la ressource id
      * Si il n'y a pas n exemplaires disponibles alors le nombre
@@ -74,13 +88,30 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      */
     public synchronized void addRessource() {
         int n;
+        try {
+            writer.write("coucou");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for (int i:ressourceDispo.keySet()){
             if(isRessourceEpuisable){
                 n = (ressourceDispo.get(i)/2) + 1;
             }else{
                 n = k;
             }
+            try {
+                writer.write(" "+i+" "+ressourceDispo.get(i));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             ressourceDispo.put(i,n);
+        }
+        try {
+            writer.write("\n");
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -127,6 +158,17 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      */
     public synchronized Map<Integer,Integer> observe()  throws RemoteException{
         return new HashMap<Integer, Integer>(ressourceDispo);
+    }
+
+    public String readLog() throws IOException {
+        if(logReader == null){
+            try {
+                logReader = new BufferedReader(new FileReader(log));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return logReader.readLine();
     }
 
 
