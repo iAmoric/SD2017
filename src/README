@@ -45,7 +45,7 @@ date typeAction
 #############
 typeAction :
     get idPro idRes QteDemande QteRecu nbRes1 ... nbResN
-    ...
+    steal idJoueur idRes QteVolee QteObtenue nbRes1 ... nbResN
 
 
 
