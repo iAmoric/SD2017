@@ -165,7 +165,9 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     }
 
     public boolean playTurn() throws RemoteException,FinDePartieException {
-        thread.notify();
+        synchronized (thread){
+            thread.notify();
+        }
         return true;
     }
 

@@ -23,15 +23,17 @@ public class ThreadRessource extends Thread {
     public void run() {
         super.run();
         while (working){
-            try {
-                if(tourParTour){
+            synchronized (this){
+                try {
+                    if(tourParTour){
                    wait();
-                }else{
-                    Thread.sleep(k);
+                    }else{
+                        Thread.sleep(k);
+                    }
+                    producteur.addRessource();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                producteur.addRessource();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }

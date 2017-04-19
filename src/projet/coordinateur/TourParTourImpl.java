@@ -23,7 +23,7 @@ public class TourParTourImpl extends UnicastRemoteObject implements TourParTour 
     }
 
 
-    public synchronized void start() {
+    public synchronized void start() throws RemoteException {
         if(!isWorking){
             isWorking = true;
             Thread t = new Thread(new Runnable() {
@@ -53,6 +53,7 @@ public class TourParTourImpl extends UnicastRemoteObject implements TourParTour 
                 }
             }
             try {
+                if(i>=joueurs.length)i=0;
                 joueurs[i].playTurn();
                 i = (i+1)%joueurs.length;
             } catch (RemoteException e) {
@@ -72,11 +73,12 @@ public class TourParTourImpl extends UnicastRemoteObject implements TourParTour 
                             k++;
                         }
                     }
+
                     joueurs = temp;
                 }
             }
-
         }
+        System.err.println("La partie est terminé");
     }
 
     /**

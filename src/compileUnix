@@ -3,4 +3,5 @@ javac projet/*/*.java
 rmic projet.producteur.ProducteurImpl
 rmic projet.joueur.JoueurImpl
 rmic projet.coordinateur.EndImpl
+rmic projet.coordinateur.TourParTourImpl
 rmiregistry 5555 &

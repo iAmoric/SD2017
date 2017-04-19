@@ -49,8 +49,6 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         super();
         this.comportement = comportement;
         log = new File(nomLog);
-        log.delete();
-        log.createNewFile();
         writer = new BufferedWriter(new FileWriter(log));
         mapRessourceProducteurs = new HashMap<Integer, List<Integer>>();
         ressources = new HashMap<Integer,Integer>();
@@ -291,7 +289,11 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     public boolean playTurn() throws RemoteException,FinDePartieException{
         if(haveFinished) throw new FinDePartieException();
-        else threadJoueur.notify();
+        else{
+            synchronized (threadJoueur){
+                threadJoueur.notify();
+            }
+        }
         return true;
     }
 

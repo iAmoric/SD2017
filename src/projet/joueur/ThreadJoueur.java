@@ -76,13 +76,13 @@ public class ThreadJoueur extends Thread {
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
             if(tourParTour){
-
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
             if(!tourParTour)
                 if(detectionVole(ressourceT,j.getRessources())){
@@ -177,10 +177,12 @@ public class ThreadJoueur extends Thread {
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
             if(tourParTour){
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             //Le joueur choisie une ressource qu'il va compléter
@@ -276,10 +278,12 @@ public class ThreadJoueur extends Thread {
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
             if(tourParTour){
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             //Le joueur choisie une ressource qu'il va compléter
@@ -348,10 +352,12 @@ public class ThreadJoueur extends Thread {
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
             if(tourParTour){
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             //Le joueur choisie une ressource qu'il va compléter

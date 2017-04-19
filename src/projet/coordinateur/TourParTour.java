@@ -1,6 +1,5 @@
 package projet.coordinateur;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
@@ -9,5 +8,5 @@ import java.rmi.RemoteException;
  */
 public interface TourParTour extends Coordinateur{
 
-    void start();
+    void start() throws RemoteException;
 }
