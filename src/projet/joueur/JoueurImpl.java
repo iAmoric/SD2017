@@ -2,6 +2,7 @@ package projet.joueur;
 
 //import org.omg.PortableInterceptor.INACTIVE;
 import projet.coordinateur.End;
+import projet.exceptions.FinDePartieException;
 import projet.exceptions.StealException;
 import projet.producteur.Producteur;
 
@@ -288,8 +289,9 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return logReader.readLine();
     }
 
-    public boolean playTurn() throws RemoteException{
-        threadJoueur.notify();
+    public boolean playTurn() throws RemoteException,FinDePartieException{
+        if(haveFinished) throw new FinDePartieException();
+        else threadJoueur.notify();
         return true;
     }
 

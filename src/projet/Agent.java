@@ -1,5 +1,7 @@
 package projet;
 
+import projet.exceptions.FinDePartieException;
+
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -12,5 +14,5 @@ public interface Agent extends Remote {
     void setId(int id) throws IOException;
     String readLog() throws IOException;
     Map<Integer,Integer> observe() throws RemoteException;
-    boolean playTurn() throws RemoteException;
+    boolean playTurn() throws RemoteException,FinDePartieException;
 }

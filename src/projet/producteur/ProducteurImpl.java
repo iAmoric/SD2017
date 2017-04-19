@@ -1,5 +1,7 @@
 package projet.producteur;
 
+import projet.exceptions.FinDePartieException;
+
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -162,8 +164,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         return new HashMap<Integer, Integer>(ressourceDispo);
     }
 
-    @Override
-    public boolean playTurn() throws RemoteException {
+    public boolean playTurn() throws RemoteException,FinDePartieException {
         thread.notify();
         return true;
     }
