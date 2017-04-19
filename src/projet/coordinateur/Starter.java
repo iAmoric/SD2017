@@ -329,7 +329,7 @@ public class Starter {
         }
         //Joueur
         for(i = 0;i<joueurs.length;i++){
-            joueurs[i].setRules(nbRessourcePrenable,canSteal,isEpuisable);
+            joueurs[i].setRules(nbRessourcePrenable,canSteal,isEpuisable,false);
         }
     }
 

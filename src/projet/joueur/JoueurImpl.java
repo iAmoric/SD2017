@@ -41,6 +41,8 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private boolean modeAntiVoleActive = false;
     private BufferedReader logReader = null;
     private Comportement comportement;
+    private ThreadJoueur threadJoueur = null;
+    private boolean tourParTour;
 
     public JoueurImpl(String nomLog,Comportement comportement) throws IOException {
         super();
@@ -134,9 +136,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      * @param canSteal si on peut voler les autres joueurs
      * @param isEpuisable si la production de ressource est épuisable
      */
-    public void setRules(int n, boolean canSteal, boolean isEpuisable) {
+    public void setRules(int n, boolean canSteal, boolean isEpuisable,boolean tourParTour) {
         nbRessourcePrenable = n;
         this.canSteal = canSteal;
+        this.tourParTour = tourParTour;
         this.isEpuisable = isEpuisable;
     }
 
@@ -221,8 +224,8 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     public void start() throws RemoteException{
         if(!isPlaying){
             isPlaying = true;
-            Thread t = new ThreadJoueur(this);
-            t.start();
+            threadJoueur = new ThreadJoueur(this);
+            threadJoueur.start();
         }
     }
 
@@ -283,6 +286,11 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             }
         }
         return logReader.readLine();
+    }
+
+    public boolean playTurn() throws RemoteException{
+        threadJoueur.notify();
+        return true;
     }
 
     //GETTERS
@@ -346,8 +354,14 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return producteurs;
     }
 
+    public boolean isTourParTour() {
+        return tourParTour;
+    }
+
     //SETTERS
     public void setModeAntiVole(boolean modeAntiVoleActive){
         this.modeAntiVoleActive = modeAntiVoleActive;
     }
+
+
 }

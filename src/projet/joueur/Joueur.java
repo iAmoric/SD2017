@@ -17,7 +17,7 @@ public interface  Joueur extends Agent{
     boolean ajouteJoueurs(String[] rmi) throws RemoteException;
     boolean ajouteProducteurs(String[] rmi)throws RemoteException;
     boolean ajouteFin(String rmi) throws RemoteException;
-    void setRules(int n,boolean canSteal,boolean isEpuisable)throws RemoteException;
+    void setRules(int n,boolean canSteal,boolean isEpuisable,boolean tourParTour)throws RemoteException;
     void start() throws RemoteException;
     int voler(int id,int quantite) throws RemoteException,StealException;
 

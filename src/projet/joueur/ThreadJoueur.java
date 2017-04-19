@@ -20,6 +20,7 @@ public class ThreadJoueur extends Thread {
     private Random loto = new Random();
     private Producteur[] producteurs;
     private boolean sum;
+    private boolean tourParTour;
     private int objectifSum;
     private int k;
     private Comportement comportement;
@@ -30,6 +31,7 @@ public class ThreadJoueur extends Thread {
         this.comportement = j.getComportement();
         objectifs = j.getObjectifs();
         sum = j.doSum();
+        tourParTour = j.isTourParTour();
         producteurs = j.getProducteurs();
         objectifSum = j.getSumObjectif();
         clefRessourceProducteurs = j.getListProducteur();
@@ -73,9 +75,19 @@ public class ThreadJoueur extends Thread {
         i = meilleurObjectif(j.getRessources(),objectifs);
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
-            if(detectionVole(ressourceT,j.getRessources())){
-                modeAntiVole(100);
+            if(tourParTour){
+
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
+            if(!tourParTour)
+                if(detectionVole(ressourceT,j.getRessources())){
+                    modeAntiVole(100);
+                }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 if(sum){
@@ -164,6 +176,13 @@ public class ThreadJoueur extends Thread {
 
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
+            if(tourParTour){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 if(sum){
@@ -256,6 +275,13 @@ public class ThreadJoueur extends Thread {
         objectif = 0;
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
+            if(tourParTour){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 if(sum){
@@ -321,6 +347,13 @@ public class ThreadJoueur extends Thread {
         i = meilleurObjectif(j.getRessources(),objectifs);
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
+            if(tourParTour){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 if(sum){

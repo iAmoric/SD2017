@@ -12,4 +12,5 @@ public interface Agent extends Remote {
     void setId(int id) throws IOException;
     String readLog() throws IOException;
     Map<Integer,Integer> observe() throws RemoteException;
+    boolean playTurn() throws RemoteException;
 }
