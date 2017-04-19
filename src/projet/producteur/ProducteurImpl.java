@@ -21,6 +21,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     private File log;
     private BufferedWriter writer;
     private BufferedReader logReader;
+    private boolean tourParTour;
 
     public ProducteurImpl() throws RemoteException{
         super();
@@ -130,14 +131,15 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         isReady = true;
     }
 
-    public void setRules(boolean isEpuisable, int k) throws RemoteException {
+    public void setRules(boolean isEpuisable, int k,boolean tourParTour) throws RemoteException {
         isRessourceEpuisable = isEpuisable;
+        this.tourParTour = tourParTour;
         this.k = k;
     }
 
     public void startProduction() throws RemoteException{
         if(thread == null){
-            thread = new ThreadRessource(this,k);
+            thread = new ThreadRessource(this,k,tourParTour);
             thread.start();
         }
     }
@@ -158,6 +160,12 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      */
     public synchronized Map<Integer,Integer> observe()  throws RemoteException{
         return new HashMap<Integer, Integer>(ressourceDispo);
+    }
+
+    @Override
+    public boolean playTurn() throws RemoteException {
+        thread.notify();
+        return true;
     }
 
     public String readLog() throws IOException {

@@ -15,7 +15,7 @@ public interface Producteur extends Agent
    int getRessource(int id,int n) throws RemoteException;
    int[] whatDoYouProduce() throws RemoteException;
    void setProductions(Map<Integer,Integer> ressourceDispo) throws RemoteException;
-   void setRules(boolean isEpuisable,int k) throws RemoteException;
+   void setRules(boolean isEpuisable,int k,boolean tourParTour) throws RemoteException;
    void startProduction() throws RemoteException;
    void stopProduction() throws RemoteException;
 

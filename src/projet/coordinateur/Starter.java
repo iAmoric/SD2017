@@ -325,7 +325,7 @@ public class Starter {
         //Producteur
         //Indique au producteur si les ressources sont épuisable et le délai pour génerer des ressources
         for(i = 0;i<producteurs.length;i++){
-            producteurs[i].setRules(isEpuisable,regenRessource);
+            producteurs[i].setRules(isEpuisable,regenRessource,false);
         }
         //Joueur
         for(i = 0;i<joueurs.length;i++){
