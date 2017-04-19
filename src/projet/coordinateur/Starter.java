@@ -29,6 +29,8 @@ public class Starter {
     private String[] connectionRMIProducteur;
     private End coordinateurFin;
     private String connectionRMIFin;
+    private TourParTour coordinateurTourParTour;
+    private boolean tourParTour = false;
     private boolean haveOptionSUM = false; //indique qu'il faut atteindre le nombre total X de ressource
     private boolean haveOptionALL = false; //indique que le même nombre de unité doit être atteint pour toutes les ressources
     private int sommeObjectif = -1;
@@ -262,6 +264,14 @@ public class Starter {
                             //TODO faire une erreur
                         }
                         break;
+                    case "TOUR":
+                        try {
+                            coordinateurTourParTour = (TourParTour)Naming.lookup(elements[1]);
+                            tourParTour = true;
+                        } catch (NotBoundException e) {
+                            e.printStackTrace();
+                        }
+                        break;
                     default :
                         System.err.println("Problème regle inconnue : " + ligne);
                         //TODO exception problème lecture
@@ -325,11 +335,11 @@ public class Starter {
         //Producteur
         //Indique au producteur si les ressources sont épuisable et le délai pour génerer des ressources
         for(i = 0;i<producteurs.length;i++){
-            producteurs[i].setRules(isEpuisable,regenRessource,false);
+            producteurs[i].setRules(isEpuisable,regenRessource,tourParTour);
         }
         //Joueur
         for(i = 0;i<joueurs.length;i++){
-            joueurs[i].setRules(nbRessourcePrenable,canSteal,isEpuisable,false);
+            joueurs[i].setRules(nbRessourcePrenable,canSteal,isEpuisable,tourParTour);
         }
     }
 
@@ -340,6 +350,11 @@ public class Starter {
         }
         for(i = 0;i<joueurs.length;i++){
             joueurs[i].start();
+        }
+        if(tourParTour){
+            coordinateurTourParTour.setProducteurs(connectionRMIProducteur);
+            coordinateurTourParTour.setJoueurs(connectionRMIJoueur);
+            coordinateurTourParTour.start();
         }
     }
 
@@ -395,7 +410,6 @@ public class Starter {
         } catch (IOException | PException e) {
             e.printStackTrace();
         }
-
         JSONConverter jsonConverter = new JSONConverter();
 
     }
