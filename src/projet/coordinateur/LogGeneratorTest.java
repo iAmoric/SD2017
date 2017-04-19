@@ -34,7 +34,7 @@ public class LogGeneratorTest {
             }
 
             try{
-                PrintWriter w = new PrintWriter("log_"+i+".txt", "UTF-8");
+                PrintWriter w = new PrintWriter("playerLog_"+i+".txt", "UTF-8");
                 w.println("Joueur " + i);
 
                 boolean resMissing = true;
@@ -57,8 +57,19 @@ public class LogGeneratorTest {
                             recu = r.nextInt(demande);
                         }
                         total[k] += recu;
-
-                        w.print(cpt + " get " + (r.nextInt(3)+1) + " " +(k+1) + " " + demande + " " + recu);
+                        int random = r.nextInt(100)+1;
+                        if (random > 80){
+                            random = r.nextInt(10)+1;
+                            if (random > 7){
+                                w.print(cpt + " steal " + (r.nextInt(3) + 1) + " " + (k + 1) + " " + demande + " " + (-1));
+                            }
+                            else {
+                                w.print(cpt + " steal " + (r.nextInt(3) + 1) + " " + (k + 1) + " " + demande + " " + recu);
+                            }
+                        }
+                        else {
+                            w.print(cpt + " get " + (r.nextInt(3) + 1) + " " + (k + 1) + " " + demande + " " + recu);
+                        }
                         for (int j = 0; j < nbResources; j++){
                             w.print(" " + total[j]);
                         }

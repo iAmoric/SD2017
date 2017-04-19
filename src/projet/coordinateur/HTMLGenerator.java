@@ -1,238 +1,39 @@
 package projet.coordinateur;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.*;
-import java.util.Map;
-import java.util.Random;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Created by lucas on 11/04/17.
  */
 public class HTMLGenerator {
 
-    int nbJoueurs;
-    int nbProducteurs;
-    int nbResources = 5;
-    Random r;
 
-    JSONObject jsonObjectMain;
+    JSONConverter jc;
+    JSONObject jsonObject;
 
-    public HTMLGenerator(Map<Integer, Integer> joueurs,
-                         Map<Integer, Integer> producteurs,
-                         Map<Integer, Integer> ressources,
-                         File[] logJoueurs,
-                         File[] logProducteurs)
-    {
+    int nbPlayers;
+    int nbProducers;
+    int nbResources;
 
-    }
+    int totalTheftAttempt;
+    int[] playerTheftAttempt;
+    int[] playerTheftSuccess;
 
+    public HTMLGenerator (JSONConverter jsonConverter) {
+        jc = jsonConverter;
 
-    public HTMLGenerator (int nbJoueurs, int nbProducteurs) {
-        this.nbJoueurs = nbJoueurs;
-        this.nbProducteurs = nbProducteurs;
+        jsonObject = jc.getJsonObjectMain();
+        nbPlayers = jc.getNbPlayers();
+        nbProducers = jc.getNbProducers();
+        totalTheftAttempt = jc.getTotalPlayerTheftAttempt();
+        playerTheftAttempt = jc.getPlayerTheftAttempt();
+        playerTheftSuccess = jc.getPlayerTheftSuccess();
 
-        r = new Random();
-
-        jsonObjectMain = new JSONObject();
-
-        String ressources[] =  {"pétrole","or", "gaz naturel", "bois", "pierre"};
-        try {
-            parseTotalLogFiles();
-            parsePlayerLogFiles(ressources);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        /*createPlayerJsonArray();
-        createProducerJsonArray();*/
         createHtmlFile();
-
-
-
     }
-
-    /**
-     * Nécessaire de connaitre le nombre de ressources ainsi que leur nombre
-     *  + Nombre de joueurs
-     *  + Nombre de producteurs (si on fait un fichier de log pour les producteurs)
-     */
-    public void parsePlayerLogFiles(String[] ressources) throws IOException {
-
-        for (int i = nbJoueurs-1; i >= 0; i--){
-            File file = new File("log_"+i+".txt");
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-            String playerName = "";
-
-            JSONArray jsonPlayerMain = new JSONArray();
-            JSONArray jsonPlayer = new JSONArray();
-
-            playerName = reader.readLine();
-
-            jsonPlayer.add("Time");
-            for (int j = 0; j < ressources.length; j++){
-                jsonPlayer.add(ressources[j]);
-            }
-            jsonPlayerMain.add(jsonPlayer);
-
-            while ((line = reader.readLine()) != null){
-                String[] words;
-                words = line.split(" ");
-                if (words[1].equals("get")){
-                    jsonPlayer = new JSONArray();
-
-                    jsonPlayer.add(Integer.parseInt(words[0]));
-                    for (int j = 6; j < 6 + ressources.length ; j++){
-                        jsonPlayer.add(Integer.parseInt(words[j]));
-                    }
-                    jsonPlayerMain.add(jsonPlayer);
-                }
-            }
-
-            jsonObjectMain.put(playerName, jsonPlayerMain);
-
-            reader.close();
-        }
-    }
-
-    public void parseTotalLogFiles() throws IOException {
-
-        BufferedReader[] readers = new BufferedReader[nbJoueurs];
-        String line;
-        JSONArray jsonMain = new JSONArray();
-        JSONArray json = new JSONArray();
-
-        for (int i = 0; i < nbJoueurs; i++){
-            File file = new File("log_"+i+".txt");
-            readers[i] = new BufferedReader(new FileReader(file));
-        }
-
-        json.add("Time");
-        for (int i = 0; i < readers.length; i++){
-            line = readers[i].readLine();
-
-            int n = Integer.parseInt(line.substring(line.length() - 1));
-            String playerName = "Joueur " + (n+1);
-            json.add(playerName);
-
-        }
-        jsonMain.add(json);
-
-        boolean noMoreLine = false;
-
-        boolean[] hasLineArray= new boolean[nbJoueurs];
-        for (int i = 0; i < hasLineArray.length; i++){
-            hasLineArray[i] = true;
-        }
-
-        int[] lastSum = new int[nbJoueurs];
-
-        int cpt = 0;
-        while (!noMoreLine){
-            cpt++;
-            json = new JSONArray();
-            json.add(cpt);
-            boolean tmpNoMoreLine = false;
-            for (int i = 0; i < readers.length; i++){
-                line = readers[i].readLine();
-                if (line == null){
-                    hasLineArray[i] = false;
-
-                    boolean continu = false;
-                    for (int j = 0; j < hasLineArray.length; j++){
-                        if (hasLineArray[j]){
-                            continu = true;
-                        }
-                    }
-
-                    if (continu)
-                        tmpNoMoreLine = false;
-                    else
-                        tmpNoMoreLine = true;
-
-                    if (!tmpNoMoreLine){
-                        json.add((lastSum[i]));
-                    }
-                }
-                else {
-                    String[] words = line.split(" ");
-                    int sum = 0;
-                    for (int j = 6; j < words.length; j++){
-                        sum += Integer.parseInt(words[j]);
-                    }
-                    lastSum[i] = sum;
-                    //System.out.println("Sum " + i + " : " + lastSum[i]);
-                    json.add(sum);
-                }
-            }
-            noMoreLine = tmpNoMoreLine;
-            jsonMain.add(json);
-        }
-
-        jsonMain.remove(jsonMain.size()-1);
-        jsonObjectMain.put("TotalPlayer", jsonMain);
-
-        for (int i = 0; i < readers.length; i++){
-            readers[i].close();
-        }
-    }
-
-    /*public void createPlayerJsonArray() {
-        playerJsonMain = new JSONArray();
-        for (int j = 0; j < nbResources ; j++) {
-            playerJson = new JSONArray();
-            for (int i = 0; i < nbJoueurs + 1; i++) {
-                if (j == 0) {
-                    if (i == 0) {
-                        playerJson.add("Time");
-                    } else {
-                        playerJson.add("Joueur " + i);
-                        if (i == nbJoueurs) {
-                            playerJson.add("Objectif");
-                        }
-                    }
-                } else {
-                    if (i == 0) {
-                        playerJson.add(j-1);
-                    } else {
-                        playerJson.add(j*10 + (r.nextInt(20)-10));
-                        if (i == nbJoueurs) {
-                            playerJson.add(target);
-                        }
-                    }
-                }
-            }
-
-            playerJsonMain.add(playerJson);
-            jsonObjectMain.put("totalPlayer", playerJsonMain);
-        }
-    }*/
-
-    /*public void createProducerJsonArray() {
-        producerJsonMain = new JSONArray();
-        for (int j = 0; j < nbResources ; j++) {
-            producerJson = new JSONArray();
-            for (int i = 0; i < nbJoueurs + 1; i++) {
-                if (j == 0) {
-                    if (i == 0) {
-                        producerJson.add("Time");
-                    } else {
-                        producerJson.add("Producteur " + i);
-                    }
-                } else {
-                    if (i == 0) {
-                        producerJson.add(j-1);
-                    } else {
-                        producerJson.add(j*10 + (r.nextInt(20)-10));
-                    }
-                }
-            }
-            producerJsonMain.add(producerJson);
-        }
-        jsonObjectMain.put("totalProducer", producerJsonMain);
-    }*/
 
     public void createHtmlFile() {
 
@@ -268,7 +69,7 @@ public class HTMLGenerator {
                     "\t\t\t\t\t\t\t\t</a>\n" +
                     "\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">\n");
 
-            for (int i = 0 ; i < nbJoueurs+1 ; i++){
+            for (int i = 0 ; i < nbPlayers + 1; i++){
                 if (i == 0) {
                     w.println(  "\t\t\t\t\t\t\t\t\t<li>\n" +
                             "\t\t\t\t\t\t\t\t\t\t<a href=\"#player\" data-toggle=\"tab\">Total</a>\n" +
@@ -276,7 +77,7 @@ public class HTMLGenerator {
                 }
                 else {
                     w.println(  "\t\t\t\t\t\t\t\t\t<li>\n" +
-                            "\t\t\t\t\t\t\t\t\t\t<a href=\"#player"+i+"\" data-toggle=\"tab\">Joueur " + i + "</a>\n" +
+                            "\t\t\t\t\t\t\t\t\t\t<a href=\"#player"+i+"\" data-toggle=\"tab\"> Joueur " + i + "</a>\n" +
                             "\t\t\t\t\t\t\t\t\t</li>\n");
                 }
             }
@@ -291,7 +92,7 @@ public class HTMLGenerator {
                     "\t\t\t\t\t\t\t\t</a>\n" +
                     "\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">\n");
 
-            for (int i = 0 ; i < nbProducteurs+1 ; i++){
+            for (int i = 0 ; i < nbProducers + 1 ; i++){
                 if (i == 0) {
                     w.println(  "\t\t\t\t\t\t\t\t\t<li>\n" +
                             "\t\t\t\t\t\t\t\t\t\t<a href=\"#producer\" data-toggle=\"tab\">Total</a>\n" +
@@ -299,7 +100,7 @@ public class HTMLGenerator {
                 }
                 else {
                     w.println(  "\t\t\t\t\t\t\t\t\t<li>\n" +
-                            "\t\t\t\t\t\t\t\t\t\t<a href=\"#producer"+i+"\" data-toggle=\"tab\">Producteur " + i + "</a>\n" +
+                            "\t\t\t\t\t\t\t\t\t\t<a href=\"#producer"+i+"\" data-toggle=\"tab\"> Producteur" + i + "</a>\n" +
                             "\t\t\t\t\t\t\t\t\t</li>\n");
                 }
             }
@@ -313,12 +114,19 @@ public class HTMLGenerator {
 
             w.println("<!-- JOUEURS -->");
 
-            for (int i = 0 ; i < nbJoueurs+1 ; i++){
+            for (int i = 0 ; i < nbPlayers + 1 ; i++){
                 if (i == 0) {
                     w.println(  "\t\t\t\t\t\t\t<div class=\"tab-pane active\" id=\"player\">\n" +
                             "\t\t\t\t\t\t\t\t<h3>Évolution des ressources totales des joueurs</h3>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t\t<div id=\"totalPlayerChart\" style=\"height:450px;width:1100px\"></div>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<hr>\n" +
+                            "\t\t\t\t\t\t\t\t<h3>Statistiques sur les vols</h3>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<h4>Il y a eu au total " + totalTheftAttempt + " tentatives de vols, dont :</h4>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<div id=\"totalTheftChart\" style=\"height:450px;width:1100px\"></div>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t</div>\n");
                 }
@@ -328,13 +136,20 @@ public class HTMLGenerator {
                             "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t\t<div id=\"playerChart"+i+"\" style=\"height:450px;width:1100px\"></div>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<hr>\n" +
+                            "\t\t\t\t\t\t\t\t<h3>Statistiques sur les vols</h3>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<h4>Le joueur " + i + " a tenté " + playerTheftAttempt[(i-1)] + " vols, dont :</h4>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<div id=\"player"+i+"TheftChart\" style=\"height:450px;width:1100px\"></div>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t</div>\n");
                 }
             }
 
             w.println("<!-- PRODUCTEURS -->");
 
-            for (int i = 0 ; i < nbJoueurs+1 ; i++){
+            for (int i = 0 ; i <nbPlayers+1 ; i++){
                 if (i == 0) {
                     w.println(  "\t\t\t\t\t\t\t<div class=\"tab-pane\" id=\"producer\">\n" +
                             "\t\t\t\t\t\t\t\t<h3>Évolution des ressources totales des producteurs</h3>\n" +
@@ -362,32 +177,44 @@ public class HTMLGenerator {
 
             w.println(  "\t<script type=\"text/javascript\">\n" +
                             "\t\tgoogle.charts.load('current', {'packages':['corechart']});\n" +
-                            "\t\tgoogle.charts.setOnLoadCallback(drawTotalPlayerChart);\n" /*+*/
+                            "\t\tgoogle.charts.setOnLoadCallback(drawTotalPlayerChart);\n" +
+                            "\t\tgoogle.charts.setOnLoadCallback(drawTotalTheftChart);"
                         /*"\t\tgoogle.charts.setOnLoadCallback(drawTotalProducerChart);\n"*/);
 
-            for (int i = 0; i < nbJoueurs; i++){
+            for (int i = 0; i < nbPlayers; i++){
                 w.println("\t\tgoogle.charts.setOnLoadCallback(drawPlayer"+i+"Chart);");
+                w.println("\t\tgoogle.charts.setOnLoadCallback(drawPlayerTheft"+i+"Chart);");
             }
 
             w.println(  "\t\tfunction drawTotalPlayerChart() {\n" +
-                    "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObjectMain.get("TotalPlayer") + ");\n" +
+                    "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("TotalPlayer") + ");\n" +
                     "\t\t\tvar options = {\n" +
                     "\t\t\t\ttitle: '',\n" +
                     "\t\t\t\theight:450,\n" +
                     "\t\t\t\twidth:1100,\n" +
-                    //"\t\t\t\tcurveType: 'function',\n" +
+                    "\t\t\t\tcurveType: 'function',\n" +
                     "\t\t\t\tanimation:{ duration: 750, easing: 'out', startup: true},\n" +
                     "\t\t\t\thAxis: {title: 'temps',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
-                    "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
-                    "\t\t\t\tseries:{"+nbJoueurs+": {lineWidth:4, color: '#e2431e'}}\n" +
+                    "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressources'},\n" +
                     "\t\t\t};\n" +
                     "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('totalPlayerChart'));\n" +
                     "\t\t\tchart.draw(data, options);\n" +
                     "\t\t}\n");
 
-            for (int i = 0; i < nbJoueurs; i++){
+            w.println(  "\t\tfunction drawTotalTheftChart() {\n" +
+                    "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("TotalTheft") + ");\n" +
+                    "\t\t\tvar options = {\n" +
+                    "\t\t\t\ttitle: '',\n" +
+                    "\t\t\t\theight:450,\n" +
+                    "\t\t\t\twidth:1100,\n" +
+                    "\t\t\t};\n" +
+                    "\t\t\tvar chart = new google.visualization.PieChart(document.getElementById('totalTheftChart'));\n" +
+                    "\t\t\tchart.draw(data, options);\n" +
+                    "\t\t}\n");
+
+            for (int i = 0; i < nbPlayers; i++){
                 w.println(  "\t\tfunction drawPlayer"+i+"Chart() {\n" +
-                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObjectMain.get("Joueur "+i) + ");\n" +
+                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("Joueur"+i) + ");\n" +
                         "\t\t\tvar options = {\n" +
                         "\t\t\t\ttitle: '',\n" +
                         "\t\t\t\theight:450,\n" +
@@ -397,6 +224,17 @@ public class HTMLGenerator {
                         "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
                         "\t\t\t};\n" +
                         "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('playerChart"+(i+1)+"'));\n" +
+                        "\t\t\tchart.draw(data, options);\n" +
+                        "\t\t}\n");
+
+                w.println(  "\t\tfunction drawPlayerTheft"+i+"Chart() {\n" +
+                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("Joueur"+i+"Theft") + ");\n" +
+                        "\t\t\tvar options = {\n" +
+                        "\t\t\t\ttitle: '',\n" +
+                        "\t\t\t\theight:450,\n" +
+                        "\t\t\t\twidth:1100,\n" +
+                        "\t\t\t};\n" +
+                        "\t\t\tvar chart = new google.visualization.PieChart(document.getElementById('player"+(i+1)+"TheftChart'));\n" +
                         "\t\t\tchart.draw(data, options);\n" +
                         "\t\t}\n");
             }
