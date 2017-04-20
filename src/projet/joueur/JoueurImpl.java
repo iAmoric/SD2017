@@ -310,6 +310,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         return true;
     }
 
+    public Map<Integer,Integer> observeAutreJoueur(int id) throws RemoteException {
+        return joueurs[id].observe();
+    }
+
     //GETTERS
     public int getNbRessourcePrenable(){
         return nbRessourcePrenable;

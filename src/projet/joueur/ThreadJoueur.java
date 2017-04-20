@@ -209,6 +209,38 @@ public class ThreadJoueur extends Thread {
     }
 
     private boolean observeJoueur(String[] splitCommande) {
+        if(splitCommande.length != 3){
+            //USAGE
+            return false;
+        }
+        int id;
+        try{
+            id = Integer.parseInt(splitCommande[2]);
+            Map<Integer,Integer> ressources = null;
+            switch (splitCommande[1]){
+                case "PROD":
+                    ressources = j.observeAutreJoueur(id);
+                    break;
+                case "PLAYER":
+                    ressources = producteurs[id].observe();
+                    break;
+                default:
+                    //USAGE
+                    break;
+            }
+            if(ressources != null){
+                System.out.print("Ressources observées: (id quantite)");
+                for (int i:ressources.keySet()){
+                    System.out.print(i+" "+ressources.get(i));
+                }
+                System.out.print("\n");
+            }
+        }catch (ArithmeticException e){
+            return false;
+        } catch (RemoteException e) {
+           return false;
+        }
+
         return true;
     }
 
@@ -218,6 +250,10 @@ public class ThreadJoueur extends Thread {
     }
 
     private boolean getJoueur(String[] splitCommande) {
+        if(splitCommande.length != 4){
+            //USAGE
+            return false;
+        }
         int numeroProducteur;
         int numeroRessource;
         int quantite;
@@ -237,6 +273,10 @@ public class ThreadJoueur extends Thread {
         int numeroJoueur;
         int numeroRessource;
         int quantite;
+        if(splitCommande.length != 4){
+            //USAGE
+            return false;
+        }
         try{
             numeroJoueur = Integer.parseInt(splitCommande[1]);
             numeroRessource = Integer.parseInt(splitCommande[2]);
