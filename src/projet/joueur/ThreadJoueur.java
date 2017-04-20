@@ -25,6 +25,7 @@ public class ThreadJoueur extends Thread {
     private int k;
     private Comportement comportement;
     private Object lock;
+    private Scanner scanner = new Scanner(System.in);
 
     public ThreadJoueur(JoueurImpl j){
         this.j = j;
@@ -55,7 +56,6 @@ public class ThreadJoueur extends Thread {
                 tourMalin();
                 break;
             case JOUEUR:
-                tourJoueur();
                 break;
         }
         System.err.println("Terminé Joueur "+j.getId());
@@ -146,8 +146,40 @@ public class ThreadJoueur extends Thread {
         return false;
     }
 
-    private void tourJoueur() {
-        //TODO il faut faire un coordinateur de tour par tour
+    private boolean tourJoueur() {
+        String[] splitCommande;
+        String commande;
+        boolean commandeValide = false;
+        //Tant que le joueur n'a pas de commande valide
+        while (!commandeValide){
+            System.out.println("Veuillez entrer votre commande");
+            //On demande au joueur d'entrer une commande
+            commande = scanner.nextLine();
+            splitCommande = commande.split(" ");
+            if(splitCommande.length > 0){
+                //On vérifie la commande
+                switch (splitCommande[0]){
+                    case "PASS":
+                        commandeValide = true;
+                        break;
+                    case "STEAL":
+                        break;
+                    case "GET":
+                        break;
+                    case "WAIT":
+                        break;
+                    case "OBSERVE":
+                        break;
+                    default:
+                        System.err.println("La commande "+splitCommande[0]+" n'existe pas");
+                        break;
+
+                }
+            }
+
+        }
+
+        return true;
     }
 
     /**
@@ -254,6 +286,7 @@ public class ThreadJoueur extends Thread {
             }
         }
     }
+
 
     /**
      * Punition quand un vole a échoué
