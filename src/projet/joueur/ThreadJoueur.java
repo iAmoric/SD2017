@@ -44,6 +44,7 @@ public class ThreadJoueur extends Thread {
         switch (comportement){
             case PASSIF:
                 tourPassif();
+                System.err.println("PARTIE TERMINEE");
                 break;
             case AGGRESIF:
                 if(j.canSteal()){
@@ -51,14 +52,16 @@ public class ThreadJoueur extends Thread {
                 }else{
                     tourAggresifSansVole();
                 }
+                System.err.println("PARTIE TERMINEE");
                 break;
             case MALIN:
                 tourMalin();
+                System.err.println("PARTIE TERMINEE");
                 break;
             case JOUEUR:
                 break;
         }
-        System.err.println("Terminé Joueur "+j.getId());
+
     }
 
     /**
@@ -146,10 +149,11 @@ public class ThreadJoueur extends Thread {
         return false;
     }
 
-    private boolean tourJoueur() {
+    public boolean tourJoueur() {
         String[] splitCommande;
         String commande;
         boolean commandeValide = false;
+        j.setModeAntiVole(false);
         //Tant que le joueur n'a pas de commande valide
         while (!commandeValide){
             System.out.println("Veuillez entrer votre commande");
@@ -163,12 +167,16 @@ public class ThreadJoueur extends Thread {
                         commandeValide = true;
                         break;
                     case "STEAL":
+                        commandeValide = voleJoueur(splitCommande);
                         break;
                     case "GET":
+                        commandeValide = getJoueur(splitCommande);
                         break;
                     case "WAIT":
+                        commandeValide = waitJoueur(splitCommande);
                         break;
                     case "OBSERVE":
+                        commandeValide = observeJoueur(splitCommande);
                         break;
                     default:
                         System.err.println("La commande "+splitCommande[0]+" n'existe pas");
@@ -176,10 +184,55 @@ public class ThreadJoueur extends Thread {
 
                 }
             }
-
         }
-
+        System.out.println("Fin du tour");
         return true;
+    }
+
+    private boolean observeJoueur(String[] splitCommande) {
+        return true;
+    }
+
+    private boolean waitJoueur(String[] splitCommande) {
+        j.setModeAntiVole(true);
+        return true;
+    }
+
+    private boolean getJoueur(String[] splitCommande) {
+        int numeroProducteur;
+        int numeroRessource;
+        int quantite;
+        try{
+            numeroProducteur = Integer.parseInt(splitCommande[1]);
+            numeroRessource = Integer.parseInt(splitCommande[2]);
+            quantite = Integer.parseInt(splitCommande[3]);
+            j.getRessource(numeroProducteur,numeroRessource,quantite);
+            return true;
+        }catch (ArithmeticException e){
+            return false;
+        }
+    }
+
+
+    private boolean voleJoueur(String[] splitCommande) {
+        int numeroJoueur;
+        int numeroRessource;
+        int quantite;
+        try{
+            numeroJoueur = Integer.parseInt(splitCommande[1]);
+            numeroRessource = Integer.parseInt(splitCommande[2]);
+            quantite = Integer.parseInt(splitCommande[3]);
+            j.voleJoueur(numeroJoueur,numeroRessource,quantite);
+            return true;
+        }catch (ArithmeticException e){
+            return false;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return false;
+        } catch (StealException e) {
+            System.err.println("Votre vole a échoué");
+            return true;
+        }
     }
 
     /**

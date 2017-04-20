@@ -54,7 +54,7 @@ public class TourParTourImpl extends UnicastRemoteObject implements TourParTour 
             }
             try {
                 if(i>=joueurs.length)i=0;
-                //System.err.println("Tour "+i);
+                System.err.println("Tour "+i);
                 joueurs[i].playTurn();
                 i = (i+1)%joueurs.length;
             } catch (RemoteException e) {

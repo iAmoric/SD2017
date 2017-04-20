@@ -295,12 +295,16 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     public boolean playTurn() throws RemoteException,FinDePartieException{
         synchronized (lock){
             if(haveFinished) throw new FinDePartieException();
-            System.err.println("Joueur"+id+ ":notify");
-            lock.notifyAll();
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            //System.err.println("Joueur"+id+ ":notify");
+            if(comportement == Comportement.JOUEUR){
+                return threadJoueur.tourJoueur();
+            }else{
+                lock.notifyAll();
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return true;
