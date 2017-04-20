@@ -54,13 +54,14 @@ public class TourParTourImpl extends UnicastRemoteObject implements TourParTour 
             }
             try {
                 if(i>=joueurs.length)i=0;
+                //System.err.println("Tour "+i);
                 joueurs[i].playTurn();
                 i = (i+1)%joueurs.length;
             } catch (RemoteException e) {
                 e.printStackTrace();
             } catch (FinDePartieException e) {
                 //On doit supprimer un joueur
-
+                System.err.println("SUPPRESSION D UN JOUEUR");
                 //Si le dernier joueur a généré l'exception alors la partie est terminée
                 if (joueurs.length == 1) continuer = false;
                 else {

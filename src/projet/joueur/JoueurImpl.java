@@ -44,6 +44,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Comportement comportement;
     private ThreadJoueur threadJoueur = null;
     private boolean tourParTour;
+    private Object lock = new Object();
 
     public JoueurImpl(String nomLog,Comportement comportement) throws IOException {
         super();
@@ -214,6 +215,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     public synchronized void stop() throws RemoteException {
         haveFinished = true;
         finDePartie.haveFinished(id);
+        synchronized (lock){
+            lock.notifyAll();
+        }
+
     }
 
     /**
@@ -288,10 +293,14 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     }
 
     public boolean playTurn() throws RemoteException,FinDePartieException{
-        if(haveFinished) throw new FinDePartieException();
-        else{
-            synchronized (threadJoueur){
-                threadJoueur.notify();
+        synchronized (lock){
+            if(haveFinished) throw new FinDePartieException();
+            System.err.println("Joueur"+id+ ":notify");
+            lock.notifyAll();
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         return true;
@@ -360,6 +369,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     public boolean isTourParTour() {
         return tourParTour;
+    }
+
+    public Object getLock(){
+        return lock;
     }
 
     //SETTERS

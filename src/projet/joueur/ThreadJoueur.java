@@ -5,12 +5,12 @@ import projet.producteur.Producteur;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.function.ObjDoubleConsumer;
 
 /**
  * Controller du JoueurImpl
  * Il est normal que cette classe connaisse la class JoueurImpl
  * car est elle lié à l'implémentation du comportement du Joueur
- * TODO créer de nouvelle personnalité (ENUM)
  * Created by jpabegg on 08/04/17.
  */
 public class ThreadJoueur extends Thread {
@@ -24,6 +24,7 @@ public class ThreadJoueur extends Thread {
     private int objectifSum;
     private int k;
     private Comportement comportement;
+    private Object lock;
 
     public ThreadJoueur(JoueurImpl j){
         this.j = j;
@@ -35,6 +36,7 @@ public class ThreadJoueur extends Thread {
         producteurs = j.getProducteurs();
         objectifSum = j.getSumObjectif();
         clefRessourceProducteurs = j.getListProducteur();
+        lock = j.getLock();
     }
     
     public void run(){
@@ -76,13 +78,7 @@ public class ThreadJoueur extends Thread {
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
             if(tourParTour){
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                tourParTour();
             }
             if(!tourParTour)
                 if(detectionVole(ressourceT,j.getRessources())){
@@ -177,13 +173,7 @@ public class ThreadJoueur extends Thread {
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
             if(tourParTour){
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                tourParTour();
             }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
@@ -253,6 +243,18 @@ public class ThreadJoueur extends Thread {
         }
     }
 
+    private void tourParTour(){
+        synchronized (lock) {
+            try {
+                lock.notifyAll();
+                System.err.println("Thread joueur"+j.getId()+":wait");
+                lock.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Punition quand un vole a échoué
      */
@@ -278,13 +280,7 @@ public class ThreadJoueur extends Thread {
         int precedent = 0;//Nombre d'unité de la ressource en cours à l'itération précedente
         while(!j.haveFinished()){
             if(tourParTour){
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                tourParTour();
             }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
@@ -352,13 +348,7 @@ public class ThreadJoueur extends Thread {
         objectif = objectifs.get(i);
         while(!j.haveFinished()){
             if(tourParTour){
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                tourParTour();
             }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
@@ -459,4 +449,6 @@ public class ThreadJoueur extends Thread {
         }
         return index;
     }
+
+
 }
