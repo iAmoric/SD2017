@@ -1,5 +1,6 @@
 package projet.joueur;
 
+import projet.exceptions.FinDePartieException;
 import projet.exceptions.StealException;
 import projet.producteur.Producteur;
 
@@ -149,12 +150,14 @@ public class ThreadJoueur extends Thread {
         return false;
     }
 
-    public boolean tourJoueur() {
+    public boolean tourJoueur() throws FinDePartieException {
         String[] splitCommande;
         String commande;
         boolean commandeValide = false;
         j.setModeAntiVole(false);
+        Map<Integer,Integer> ressource = j.getRessources();
         //Tant que le joueur n'a pas de commande valide
+        System.out.println("Début de votre tour");
         while (!commandeValide){
             System.out.println("Veuillez entrer votre commande");
             //On demande au joueur d'entrer une commande
@@ -178,14 +181,30 @@ public class ThreadJoueur extends Thread {
                     case "OBSERVE":
                         commandeValide = observeJoueur(splitCommande);
                         break;
+                    case "INFO":
+                        System.out.print("Vos ressources (id quantite ): ");
+                        for (int i: ressource.keySet()){
+                            System.out.print(i+" "+ressource.get(i)+" ");
+                        }
+                        System.out.print("\n");
+                        break;
                     default:
                         System.err.println("La commande "+splitCommande[0]+" n'existe pas");
                         break;
-
                 }
             }
         }
+        System.out.print("Vos ressources (id quantite ): ");
+        for (int i: ressource.keySet()){
+            System.out.print(i+" "+ressource.get(i)+" ");
+        }
+        System.out.print("\n");
         System.out.println("Fin du tour");
+
+        //Détection de fin de partie
+        List<Integer> l = new ArrayList<Integer>();
+        l = ressourceNonTermine(l,j.getRessources());
+        if(l.size() == 0)throw new FinDePartieException();
         return true;
     }
 
