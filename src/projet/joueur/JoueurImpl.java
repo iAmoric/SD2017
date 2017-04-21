@@ -310,7 +310,39 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      * @throws StealException
      */
     public int voleJoueur(int indexJoueur,int idRessource, int quantite) throws RemoteException, StealException {
-        return joueurs[indexJoueur].voler(idRessource,quantite);
+        int result = 0;
+        String message;
+        try{
+            result =  joueurs[indexJoueur].voler(idRessource,quantite);
+            message = "0 steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
+            for(int i:ressourceOrdonnee){
+                message = message+" "+ressources.get(i);
+            }
+            writer.write(message+"\n");
+            writer.flush();
+            for (int i:observateur){
+                joueurs[i].echo(message);
+            }
+        }catch (StealException e){
+            try {
+                message = "0 steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
+                for(int i:ressourceOrdonnee){
+                    message = message+" "+ressources.get(i);
+                }
+                writer.write(message+"\n");
+                writer.flush();
+                for (int i:observateur){
+                    joueurs[i].echo(message);
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            throw new StealException();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
