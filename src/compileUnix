@@ -1,5 +1,5 @@
 pkill rmiregistry
-javac projet/*/*.java
+javac -cp ".:org.json.simple-0.4.jar" projet/*/*.java
 rmic projet.producteur.ProducteurImpl
 rmic projet.joueur.JoueurImpl
 rmic projet.coordinateur.EndImpl
