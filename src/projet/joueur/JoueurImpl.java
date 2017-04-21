@@ -455,6 +455,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
 
     public boolean numeroRessourceValide(int numeroRessource) {
+        return numeroRessource>0 && numeroRessource <= objectifs.size();
     }
 
     public boolean joueurValide(int numeroJoueur) {
