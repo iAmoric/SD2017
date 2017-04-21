@@ -10,6 +10,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implémentation du coordinateur de fin de partie
@@ -21,7 +23,9 @@ public class EndImpl extends UnicastRemoteObject implements End {
     private boolean[] joueursEnPartie;
     private File[] logsJoueur;
     private File[] logsProducteur;
+    private Map<Integer,String> clefNumeroRessource;
     protected EndImpl() throws RemoteException {
+
     }
 
     /**
@@ -100,6 +104,14 @@ public class EndImpl extends UnicastRemoteObject implements End {
                 }
             });
             t.start();
+        }
+    }
+
+    @Override
+    public void clefRessource(Map<String, Integer> clefRessource) throws RemoteException {
+        if(clefNumeroRessource == null)clefNumeroRessource = new HashMap<Integer,String>();
+        for (String s:clefRessource.keySet()){
+            clefNumeroRessource.put(clefRessource.get(s),s);
         }
     }
 

@@ -286,6 +286,7 @@ public class Starter {
     }
 
     public void initFin() throws RemoteException{
+        coordinateurFin.clefRessource(ressources);
         coordinateurFin.setJoueurs(connectionRMIJoueur);
         coordinateurFin.setProducteurs(connectionRMIProducteur);
     }
