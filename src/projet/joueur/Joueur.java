@@ -20,5 +20,8 @@ public interface  Joueur extends Agent{
     void setRules(int n,boolean canSteal,boolean isEpuisable,boolean tourParTour)throws RemoteException;
     void start() throws RemoteException;
     int voler(int id,int quantite) throws RemoteException,StealException;
+    boolean ajouteObservation(int id)throws RemoteException;
+    boolean retireObservation(int id)throws RemoteException;
+    void echo(String message)throws RemoteException;
 
 }

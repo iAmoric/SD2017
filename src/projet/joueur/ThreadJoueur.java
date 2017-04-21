@@ -22,6 +22,7 @@ public class ThreadJoueur extends Thread {
     private Producteur[] producteurs;
     private boolean sum;
     private boolean tourParTour;
+    private boolean observeSysteme = false;
     private int objectifSum;
     private int k;
     private Comportement comportement;
@@ -157,6 +158,11 @@ public class ThreadJoueur extends Thread {
         j.setModeAntiVole(false);
         Map<Integer,Integer> ressource = j.getRessources();
         //Tant que le joueur n'a pas de commande valide
+
+        if(observeSysteme){
+            j.observeSystemeFin();
+            observeSysteme = false;
+        }
         System.out.println("Début de votre tour");
         while (!commandeValide){
             System.out.println("Veuillez entrer votre commande");
@@ -209,11 +215,17 @@ public class ThreadJoueur extends Thread {
     }
 
     private boolean observeJoueur(String[] splitCommande) {
-        if(splitCommande.length != 3){
-            //USAGE
-            return false;
-        }
         int id;
+        if(splitCommande.length < 3){
+            if(splitCommande.length != 2){
+                return false;
+            }
+            if(splitCommande[1].equals("ALL")){
+                j.observeSysteme();
+                observeSysteme = true;
+                return true;
+            }
+        }
         try{
             id = Integer.parseInt(splitCommande[2]);
             Map<Integer,Integer> ressources = null;
@@ -224,6 +236,7 @@ public class ThreadJoueur extends Thread {
                 case "PLAYER":
                     ressources = producteurs[id].observe();
                     break;
+
                 default:
                     //USAGE
                     break;
@@ -596,4 +609,7 @@ public class ThreadJoueur extends Thread {
     }
 
 
+    public void echo(String message) {
+        System.err.println("Action d'un joueur: "+message);
+    }
 }

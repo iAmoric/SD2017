@@ -44,6 +44,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private Comportement comportement;
     private ThreadJoueur threadJoueur = null;
     private boolean tourParTour;
+    private Set<Integer> observateur;//numéro des joueurs qui nous observes
     private Object lock = new Object();
 
     public JoueurImpl(String nomLog,Comportement comportement) throws IOException {
@@ -53,6 +54,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         writer = new BufferedWriter(new FileWriter(log));
         mapRessourceProducteurs = new HashMap<Integer, List<Integer>>();
         ressources = new HashMap<Integer,Integer>();
+        observateur = new HashSet<Integer>();
     }
 
 
@@ -190,17 +192,21 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      */
     public synchronized int getRessource(int index,int idRessource,int quantite){
         int total;
+        String message;
         try {
             int obtenue = producteurs[index].getRessource(idRessource,quantite);
             if(obtenue != -1){
                 total = obtenue + ressources.get(idRessource);
                 ressources.put(idRessource,total);
-                writer.write("0 get "+index+" "+idRessource+" "+quantite+" "+obtenue);
+                message = ("0 get "+index+" "+idRessource+" "+quantite+" "+obtenue);
                 for(int i:ressourceOrdonnee){
-                    writer.write(" "+ressources.get(i));
+                   message = message+" "+ressources.get(i);
                 }
-                writer.write("\n");
+                writer.write(message+"\n");
                 writer.flush();
+                for (int i:observateur){
+                    joueurs[i].echo(message);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -253,6 +259,43 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             ressources.put(id,dispo-result);
         }
         return result;
+    }
+
+    /**
+     * Ajoute un joueur à la liste des joueur qui observe les actions cette instance
+     * @param id, numéro d'un joueur
+     * @return true
+     * @throws RemoteException
+     */
+    public synchronized boolean ajouteObservation(int id) throws RemoteException {
+        if(id>this.id){
+            id--;
+        }
+        observateur.add(id);
+        return true;
+    }
+
+    /**
+     * Retire un joueur de la listre des joueurs qui observe les actions de cette instance
+     * @param id, numéro d'un joueur
+     * @return true
+     * @throws RemoteException
+     */
+    public synchronized boolean retireObservation(int id) throws RemoteException {
+        if(id>this.id){
+            id--;
+        }
+        observateur.remove(id);
+        return true;
+    }
+
+    /**
+     * Permet de recevoir l'action d'un  joueur qu'on observe
+     * @param message: mesage d'un joueur qu'on observe
+     * @throws RemoteException
+     */
+    public void echo(String message) throws RemoteException {
+        threadJoueur.echo(message);
     }
 
     /**
@@ -312,6 +355,27 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
     public Map<Integer,Integer> observeAutreJoueur(int id) throws RemoteException {
         return joueurs[id].observe();
+    }
+
+
+    public void observeSysteme(){
+        for (int i = 0;i<joueurs.length;i++){
+            try {
+                joueurs[i].ajouteObservation(id);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void observeSystemeFin(){
+        for (int i = 0;i<joueurs.length;i++){
+            try {
+                joueurs[i].retireObservation(id);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     //GETTERS
