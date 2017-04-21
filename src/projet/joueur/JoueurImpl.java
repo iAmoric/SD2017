@@ -354,6 +354,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     }
 
     public Map<Integer,Integer> observeAutreJoueur(int id) throws RemoteException {
+        if(id >= joueurs.length)return null;
         return joueurs[id].observe();
     }
 
@@ -453,4 +454,10 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     }
 
 
+    public boolean numeroRessourceValide(int numeroRessource) {
+    }
+
+    public boolean joueurValide(int numeroJoueur) {
+        return numeroJoueur>= 0 && numeroJoueur<joueurs.length;
+    }
 }

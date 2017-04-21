@@ -234,7 +234,8 @@ public class ThreadJoueur extends Thread {
                     ressources = j.observeAutreJoueur(id);
                     break;
                 case "PLAYER":
-                    ressources = producteurs[id].observe();
+                    if(id <= producteurs.length)
+                        ressources = producteurs[id].observe();
                     break;
 
                 default:
@@ -247,6 +248,8 @@ public class ThreadJoueur extends Thread {
                     System.out.print(i+" "+ressources.get(i));
                 }
                 System.out.print("\n");
+            }else{
+                return false;
             }
         }catch (ArithmeticException e){
             return false;
@@ -274,11 +277,15 @@ public class ThreadJoueur extends Thread {
             numeroProducteur = Integer.parseInt(splitCommande[1]);
             numeroRessource = Integer.parseInt(splitCommande[2]);
             quantite = Integer.parseInt(splitCommande[3]);
-            j.getRessource(numeroProducteur,numeroRessource,quantite);
-            return true;
+            if(quantite<=k && numeroProducteur < producteurs.length){
+                j.getRessource(numeroProducteur,numeroRessource,quantite);
+                return true;
+            }
+
         }catch (ArithmeticException e){
             return false;
         }
+        return false;
     }
 
 
@@ -294,8 +301,17 @@ public class ThreadJoueur extends Thread {
             numeroJoueur = Integer.parseInt(splitCommande[1]);
             numeroRessource = Integer.parseInt(splitCommande[2]);
             quantite = Integer.parseInt(splitCommande[3]);
-            j.voleJoueur(numeroJoueur,numeroRessource,quantite);
-            return true;
+            if(quantite <= k){
+                if(j.joueurValide(numeroJoueur) && j.numeroRessourceValide(numeroRessource)){
+                    j.voleJoueur(numeroJoueur,numeroRessource,quantite);
+                    return true;
+                }else {
+                    return false;
+                }
+            }else{
+                return false;
+            }
+
         }catch (ArithmeticException e){
             return false;
         } catch (RemoteException e) {
@@ -404,7 +420,6 @@ public class ThreadJoueur extends Thread {
         synchronized (lock) {
             try {
                 lock.notifyAll();
-                System.err.println("Thread joueur"+j.getId()+":wait");
                 lock.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
