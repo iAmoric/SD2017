@@ -85,10 +85,11 @@ public class ThreadJoueur extends Thread {
             if(tourParTour){
                 tourParTour();
             }
-            if(!tourParTour)
-                if(detectionVole(ressourceT,j.getRessources())){
+            if(!tourParTour){
+                if(detectionVole(ressourceT,j.getRessources())) {
                     modeAntiVole(100);
                 }
+            }
             //Le joueur choisie une ressource qu'il va compléter
             if(!haveAObjectif){
                 if(sum){
@@ -103,20 +104,41 @@ public class ThreadJoueur extends Thread {
                 i = ressourceNonTermine.get(loto.nextInt(ressourceNonTermine.size()));
             }
             //Il sélectionne le producteur qui possède le plus de ressource
-            try {
-                index = calculProducteur(i);
-            } catch (RemoteException e) {
-                index = 0;
+            if(tourParTour){
+                if(detectionVole(ressourceT,j.getRessources())) {
+                    modeAntiVole(100);
+                }
+                try {
+                    index = calculProducteur(i);
+                } catch (RemoteException e) {
+                    index = 0;
+                }
+                retour = j.getRessource(index,i,k);
+                if(sum){
+                    retour = j.getTotalRessource();
+                }
+                if(retour>=objectif){
+                    haveAObjectif = false;
+                    ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
+                }
+                ressourceT = new HashMap<Integer,Integer>(j.getRessources());
+            }else{
+                try {
+                    index = calculProducteur(i);
+                } catch (RemoteException e) {
+                    index = 0;
+                }
+                retour = j.getRessource(index,i,k);
+                if(sum){
+                    retour = j.getTotalRessource();
+                }
+                if(retour>=objectif){
+                    haveAObjectif = false;
+                    ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
+                }
+                ressourceT = new HashMap<Integer,Integer>(j.getRessources());
             }
-            retour = j.getRessource(index,i,k);
-            if(sum){
-                retour = j.getTotalRessource();
-            }
-            if(retour>=objectif){
-                haveAObjectif = false;
-                ressourceNonTermine = ressourceNonTermine(ressourceNonTermine,j.getRessources());
-            }
-            ressourceT = new HashMap<Integer,Integer>(j.getRessources());
+
 
         }
     }
@@ -128,6 +150,7 @@ public class ThreadJoueur extends Thread {
      */
     private void modeAntiVole(int i) {
         j.setModeAntiVole(true);
+        if(tourParTour)return;
         try {
             Thread.sleep(i);
         } catch (InterruptedException e) {
@@ -421,6 +444,7 @@ public class ThreadJoueur extends Thread {
             try {
                 lock.notifyAll();
                 lock.wait();
+                j.setModeAntiVole(false);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
