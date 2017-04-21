@@ -45,7 +45,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private ThreadJoueur threadJoueur = null;
     private boolean tourParTour;
     private Set<Integer> observateur;//numéro des joueurs qui nous observes
-    private int numeroTour = 0;
+    private long numeroTour = 0;
     private long timestamp;
     private Object lock = new Object();
 
@@ -341,7 +341,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             }
         }catch (StealException e){
             try {
-                message = estampille+" steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
+                message = estampille+" steal "+indexJoueur+" "+idRessource+" "+quantite+" -1";
                 for(int i:ressourceOrdonnee){
                     message = message+" "+ressources.get(i);
                 }

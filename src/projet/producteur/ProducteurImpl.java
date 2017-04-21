@@ -24,6 +24,8 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     private BufferedWriter writer;
     private BufferedReader logReader;
     private boolean tourParTour;
+    private long timestamp;
+    private long numeroTour = 0;
 
     public ProducteurImpl() throws RemoteException{
         super();
@@ -91,8 +93,9 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      */
     public synchronized void addRessource() {
         int n;
+        long estampille = genereEstampille();
         try {
-            writer.write("coucou");
+            writer.write(estampille+ " add");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,6 +119,17 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private long genereEstampille() {
+        long estampille;
+        if(tourParTour){
+            estampille = numeroTour;
+            numeroTour++;
+        }else{
+            estampille = System.currentTimeMillis()-timestamp;
+        }
+        return estampille;
     }
 
     public int[] whatDoYouProduce() {
@@ -142,6 +156,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
     public void startProduction() throws RemoteException{
         if(thread == null){
             thread = new ThreadRessource(this,k,tourParTour);
+            timestamp = System.currentTimeMillis();
             thread.start();
         }
     }
