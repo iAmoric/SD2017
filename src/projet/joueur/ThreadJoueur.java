@@ -278,7 +278,7 @@ public class ThreadJoueur extends Thread {
             numeroRessource = Integer.parseInt(splitCommande[2]);
             quantite = Integer.parseInt(splitCommande[3]);
             if(quantite<=k && numeroProducteur < producteurs.length){
-                j.getRessource(numeroProducteur,numeroRessource,quantite);
+                if(j.getRessource(numeroProducteur,numeroRessource,quantite) == -1)return false;
                 return true;
             }
 
@@ -303,7 +303,7 @@ public class ThreadJoueur extends Thread {
             quantite = Integer.parseInt(splitCommande[3]);
             if(quantite <= k){
                 if(j.joueurValide(numeroJoueur) && j.numeroRessourceValide(numeroRessource)){
-                    j.voleJoueur(numeroJoueur,numeroRessource,quantite);
+                    if(j.voleJoueur(numeroJoueur,numeroRessource,quantite) == -1)return false;
                     return true;
                 }else {
                     return false;

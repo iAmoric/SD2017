@@ -211,6 +211,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(!ressources.keySet().contains(idRessource))return -1;
         return ressources.get(idRessource);
     }
 
@@ -250,6 +251,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         if(!haveFinished){
             if(modeAntiVoleActive)throw new StealException();
             //On ne peut pas voler un joueur qui a terminé la partie
+            if(!ressources.keySet().contains(id))return -1;
             int dispo = ressources.get(id);
             if(dispo - quantite >= 0){
                 result = quantite;
