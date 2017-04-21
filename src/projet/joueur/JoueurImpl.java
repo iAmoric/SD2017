@@ -45,6 +45,8 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private ThreadJoueur threadJoueur = null;
     private boolean tourParTour;
     private Set<Integer> observateur;//numéro des joueurs qui nous observes
+    private int numeroTour = 0;
+    private long timestamp;
     private Object lock = new Object();
 
     public JoueurImpl(String nomLog,Comportement comportement) throws IOException {
@@ -193,12 +195,13 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     public synchronized int getRessource(int index,int idRessource,int quantite){
         int total;
         String message;
+        long estampille = genereEstampille();
         try {
             int obtenue = producteurs[index].getRessource(idRessource,quantite);
             if(obtenue != -1){
                 total = obtenue + ressources.get(idRessource);
                 ressources.put(idRessource,total);
-                message = ("0 get "+index+" "+idRessource+" "+quantite+" "+obtenue);
+                message = (estampille+" get "+index+" "+idRessource+" "+quantite+" "+obtenue);
                 for(int i:ressourceOrdonnee){
                    message = message+" "+ressources.get(i);
                 }
@@ -213,6 +216,17 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         }
         if(!ressources.keySet().contains(idRessource))return -1;
         return ressources.get(idRessource);
+    }
+
+    private long genereEstampille() {
+        long estampille;
+        if(tourParTour){
+            estampille = numeroTour;
+            numeroTour++;
+        }else{
+            estampille = System.currentTimeMillis() - timestamp;
+        }
+        return estampille;
     }
 
     /**
@@ -236,6 +250,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         if(!isPlaying){
             isPlaying = true;
             threadJoueur = new ThreadJoueur(this);
+            timestamp = System.currentTimeMillis();
             threadJoueur.start();
         }
     }
@@ -311,10 +326,11 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
      */
     public int voleJoueur(int indexJoueur,int idRessource, int quantite) throws RemoteException, StealException {
         int result = 0;
+        long estampille = genereEstampille();
         String message;
         try{
             result =  joueurs[indexJoueur].voler(idRessource,quantite);
-            message = "0 steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
+            message = estampille+" steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
             for(int i:ressourceOrdonnee){
                 message = message+" "+ressources.get(i);
             }
@@ -325,7 +341,7 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             }
         }catch (StealException e){
             try {
-                message = "0 steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
+                message = estampille+" steal "+indexJoueur+" "+idRessource+" "+quantite+" "+result;
                 for(int i:ressourceOrdonnee){
                     message = message+" "+ressources.get(i);
                 }

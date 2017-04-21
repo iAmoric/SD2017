@@ -14,5 +14,4 @@ K 100
 N 10
 STEAL ON
 EPUISABLE ON
-TOUR rmi://localhost:5555/TourImpl
 FIN rmi://localhost:5555/EndImpl
