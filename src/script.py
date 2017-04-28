@@ -1,4 +1,5 @@
 import os
+import time
 
 
 fichier = open("init","r")
@@ -63,7 +64,9 @@ for ligne in lignes:
 			os.system(string)
 
 
+time.sleep(1)
 string = 'gnome-terminal --command="java projet.coordinateur.Starter init"'
+os.system(string)
 
 
 

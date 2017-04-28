@@ -23,8 +23,9 @@ public class LancerEnd {
         {
             EndImpl impl = new EndImpl();
             End objLocal = (End)impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
-            System.err.println("Coordinateur de fin enregistré");
+            String rmi =  "rmi://localhost:"+portRMI+"/"+nomService;
+            Naming.rebind(rmi ,objLocal) ;
+            System.err.println("Coordinateur de fin enregistré: "+rmi);
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }

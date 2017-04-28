@@ -26,12 +26,11 @@ public class LancerJoueur {
         }
         try
         {
-            //TOUR rmi://localhost:5555/TourImpl
-            //TODO faire des arguments: hostStarter portStarter
+            String rmi = "rmi://localhost:"+portRMI+"/"+nomService;
             JoueurImpl impl = new JoueurImpl(comportement);
             Joueur objLocal = (Joueur) impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
-            System.err.println("Le joueur est enregistré");
+            Naming.rebind( rmi ,objLocal) ;
+            System.err.println("Le joueur est enregistré: "+rmi);
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; } catch (IOException e) {

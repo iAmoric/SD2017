@@ -28,10 +28,11 @@ public class LancerProducteur {
         String nomService = args[1];
         try
         {
+            String rmi =  "rmi://localhost:"+portRMI+"/"+nomService;
             ProducteurImpl impl = new ProducteurImpl();
             Producteur objLocal = (Producteur)impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
-            System.out.println("Producteur pret") ;
+            Naming.rebind(rmi ,objLocal) ;
+            System.out.println("Producteur pret: "+rmi) ;
 
         }
         catch (RemoteException re) { System.out.println(re) ; }

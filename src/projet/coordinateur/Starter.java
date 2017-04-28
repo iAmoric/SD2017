@@ -149,6 +149,7 @@ public class Starter {
      */
     private void parseJoueur(BufferedReader reader) throws IOException, RMIExecption {
         String ligne;
+        String ligneAvecTraitement;
         List<Joueur> listJoueur = new ArrayList<Joueur>();
         List<String> listString = new ArrayList<String>();
         while ( (ligne = reader.readLine()) != null){
@@ -156,11 +157,13 @@ public class Starter {
                 parseProducteur(reader);
             }else{
                 try {
-                    listJoueur.add((Joueur)Naming.lookup(ligne));
+                    ligneAvecTraitement = ligne.split(" ")[0];
+                    System.err.println(ligneAvecTraitement);
+                    listJoueur.add((Joueur)Naming.lookup(ligneAvecTraitement));
                 } catch (NotBoundException e) {
                     throw new RMIExecption(ligne);
                 }
-                listString.add(ligne);
+                listString.add(ligneAvecTraitement);
             }
         }
         //On a lu le fichier en entier à ce moment

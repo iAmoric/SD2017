@@ -17,10 +17,11 @@ public class LancerTour {
         String nomService = args[1];
         try
         {
+            String rmi =  "rmi://localhost:"+portRMI+"/"+nomService;
            TourParTourImpl impl = new TourParTourImpl();
             TourParTour objLocal = (TourParTour)impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
-            System.err.println("Coordinateur de tour par tour enregistré");
+            Naming.rebind( rmi,objLocal) ;
+            System.err.println("Coordinateur de tour par tour enregistré: "+rmi);
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }
