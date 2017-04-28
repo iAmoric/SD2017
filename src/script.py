@@ -49,20 +49,16 @@ for ligne in lignes:
 		ligneSplit = ligne.split(" ")
 		if ligneSplit[0] == "TOUR" :
 			ligneRMI = ligneSplit[1]
-			ligneRMI = ligneRMI.split("/")
-			nomServiceRMI = ligneSplit[1].split("/")[3]
-			ipRMI = " ".join(ligneRMI).split(":")[1]
-			portRMI = " ".join(ligneSplit).split(":")[2]
-			string = 'gnome-terminal --command="java projet.coordinateur.LancerTour '+portRMI+' '+nomServiceRMI+'"'
+			ipRMI = ligneRMI.split(":")[1].split("/")[2]
+			arguments = " ".join(ligneRMI.split(":")[2].split("/"))
+			string = 'gnome-terminal --command="java projet.coordinateur.LancerTour '+arguments+'"'
 			print string
 			os.system(string)
 		if ligneSplit[0] == "FIN":
 			ligneRMI = ligneSplit[1]
-			ligneRMI = ligneRMI.split("/")
-			nomServiceRMI = ligneSplit[1].split("/")[3]
-			ipRMI = " ".join(ligneRMI).split(":")[1]
-			portRMI = " ".join(ligneSplit).split(":")[2]
-			string = 'gnome-terminal --command="java projet.coordinateur.LancerEnd '+portRMI+' '+nomServiceRMI+'"'
+			ipRMI = ligneRMI.split(":")[1].split("/")[2]
+			arguments = " ".join(ligneRMI.split(":")[2].split("/"))
+			string = 'gnome-terminal --command="java projet.coordinateur.LancerEnd '+arguments+'"'
 			print string
 			os.system(string)
 
