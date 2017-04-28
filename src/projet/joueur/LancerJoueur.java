@@ -11,14 +11,17 @@ import java.rmi.RemoteException;
  */
 public class LancerJoueur {
     public static void main(String[] args){
+        if(args.length != 3){
+            System.err.println("usage LancerJoueur portRMI nomService comportement");
+        }
         int portRMI = 5555;
         try
         {
             //TOUR rmi://localhost:5555/TourImpl
             //TODO faire des arguments: hostStarter portStarter
-            JoueurImpl impl = new JoueurImpl("logA",Comportement.MALIN);
+            JoueurImpl impl = new JoueurImpl(Comportement.MALIN);
             Joueur objLocal = (Joueur) impl;
-            JoueurImpl implB = new JoueurImpl("logB",Comportement.AGGRESIF);
+            JoueurImpl implB = new JoueurImpl(Comportement.AGGRESIF);
             Naming.rebind( "rmi://localhost:"+portRMI+"/JoueurA" ,objLocal) ;
             Joueur objLocalB = (Joueur)implB;
             Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocalB);

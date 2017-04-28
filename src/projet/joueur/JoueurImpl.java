@@ -49,11 +49,9 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
     private long timestamp;
     private Object lock = new Object();
 
-    public JoueurImpl(String nomLog,Comportement comportement) throws IOException {
+    public JoueurImpl(Comportement comportement) throws IOException {
         super();
         this.comportement = comportement;
-        log = new File(nomLog);
-        writer = new BufferedWriter(new FileWriter(log));
         mapRessourceProducteurs = new HashMap<Integer, List<Integer>>();
         ressources = new HashMap<Integer,Integer>();
         observateur = new HashSet<Integer>();
@@ -61,6 +59,12 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
 
 
     public void setId(int id) throws RemoteException{
+        log = new File("logJoueur"+id);
+        try {
+            writer = new BufferedWriter(new FileWriter(log));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.id = id;
     }
 
