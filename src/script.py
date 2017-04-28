@@ -28,17 +28,15 @@ for ligne in lignes:
 		readingRegle = 1
 	elif executeJoueur == 1 :
 		ligneSplit = ligne.split("/")
-		print(" ".join(ligneSplit))
-		nomServiceRMI = ligneSplit[3]
+		#print(" ".join(ligneSplit))
 		ipRMI = " ".join(ligneSplit).split(":")[1]
-		portRMI = " ".join(ligneSplit).split(":")[2]
-		comportement = ligne.split(" ")[1];
-		string = 'gnome-terminal --command="java projet.joueur.LancerJoueur '+portRMI+' '+nomServiceRMI+' '+comportement+'"'
+		arguments = " ".join(ligneSplit).split(":")[2]
+		string = 'gnome-terminal --command="java projet.joueur.LancerJoueur '+arguments+'"'
 		print string
 		os.system(string)
 	elif executeProducteur == 1:
 		ligneSplit = ligne.split("/")
-		print(" ".join(ligneSplit))
+		#print(" ".join(ligneSplit))
 		nomServiceRMI = ligneSplit[3]
 		ipRMI = " ".join(ligneSplit).split(":")[1]
 		portRMI = " ".join(ligneSplit).split(":")[2]
@@ -49,9 +47,23 @@ for ligne in lignes:
 	elif readingRegle == 1:
 		ligneSplit = ligne.split(" ")
 		if ligneSplit[0] == "TOUR" :
-			os.system('gnome-terminal')
+			ligneRMI = ligneSplit[1]
+			ligneRMI = ligneRMI.split("/")
+			nomServiceRMI = ligneSplit[1].split("/")[3]
+			ipRMI = " ".join(ligneRMI).split(":")[1]
+			portRMI = " ".join(ligneSplit).split(":")[2]
+			string = 'gnome-terminal --command="java projet.coordinateur.LancerTour '+portRMI+' '+nomServiceRMI+'"'
+			print string
+			os.system(string)
 		if ligneSplit[0] == "FIN":
-			os.system('gnome-terminal')
+			ligneRMI = ligneSplit[1]
+			ligneRMI = ligneRMI.split("/")
+			nomServiceRMI = ligneSplit[1].split("/")[3]
+			ipRMI = " ".join(ligneRMI).split(":")[1]
+			portRMI = " ".join(ligneSplit).split(":")[2]
+			string = 'gnome-terminal --command="java projet.coordinateur.LancerEnd '+portRMI+' '+nomServiceRMI+'"'
+			print string
+			os.system(string)
 
 
 

@@ -9,12 +9,18 @@ import java.rmi.RemoteException;
  */
 public class LancerTour {
     public static void main(String[] args){
-        int portRMI = 5555;
+        if(args.length != 2){
+            System.err.println("usage LancerTour portRMI nomService");
+            System.exit(1);
+        }
+        int portRMI = Integer.parseInt(args[0]);
+        String nomService = args[1];
         try
         {
            TourParTourImpl impl = new TourParTourImpl();
             TourParTour objLocal = (TourParTour)impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/TourImpl" ,objLocal) ;
+            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
+            System.err.println("Coordinateur de tour par tour enregistré");
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }

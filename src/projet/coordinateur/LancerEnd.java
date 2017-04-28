@@ -13,12 +13,18 @@ import java.rmi.RemoteException;
 public class LancerEnd {
 
     public static void main(String[] args){
-        int portRMI = 5555;
+        if(args.length != 2){
+            System.err.println("usage LancerEnd portRMI nomService");
+            System.exit(1);
+        }
+        int portRMI = Integer.parseInt(args[0]);
+        String nomService = args[1];
         try
         {
             EndImpl impl = new EndImpl();
             End objLocal = (End)impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/EndImpl" ,objLocal) ;
+            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
+            System.err.println("Coordinateur de fin enregistré");
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; }
