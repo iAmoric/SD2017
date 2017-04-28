@@ -17,10 +17,14 @@ public class HTMLGenerator {
     int nbPlayers;
     int nbProducers;
     int nbResources;
+    boolean tour;
 
     int totalTheftAttempt;
     int[] playerTheftAttempt;
     int[] playerTheftSuccess;
+    int[] playerSteps;
+    double[] playerTime;
+    String[] playerComportement;
 
     public HTMLGenerator (JSONConverter jsonConverter) {
         jc = jsonConverter;
@@ -31,6 +35,10 @@ public class HTMLGenerator {
         totalTheftAttempt = jc.getTotalPlayerTheftAttempt();
         playerTheftAttempt = jc.getPlayerTheftAttempt();
         playerTheftSuccess = jc.getPlayerTheftSuccess();
+        playerTime = jc.getPlayerTime();
+        playerComportement = jc.getPlayerComportement();
+        playerSteps = jc.getPlayerSteps();
+        tour = jc.isTour();
 
         createHtmlFile();
     }
@@ -115,25 +123,51 @@ public class HTMLGenerator {
             w.println("<!-- JOUEURS -->");
 
             for (int i = 0 ; i < nbPlayers + 1 ; i++){
-                if (i == 0) {
+                if (i == 0) {  // Total
                     w.println(  "\t\t\t\t\t\t\t<div class=\"tab-pane active\" id=\"player\">\n" +
                             "\t\t\t\t\t\t\t\t<h3>Évolution des ressources totales des joueurs</h3>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n");
+                    if (tour){
+                        w.print("\t\t\t\t\t\t\t\t<h4>Mode tour par tour. Nombre de tours : " + jc.getMaxSteps() + ".</h4>\n");
+                    }
+                    else {
+                        w.print("\t\t\t\t\t\t\t\t<h4>Durée totale de la partie : " + jc.getMaxTime() + " secondes.</h4>\n");
+                    }
+
+                    w.println(  "\t\t\t\t\t\t\t\t<div id=\"totalPlayerChart\" style=\"height:450px;width:1100px\"></div>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
-                            "\t\t\t\t\t\t\t\t<div id=\"totalPlayerChart\" style=\"height:450px;width:1100px\"></div>\n" +
-                            "\t\t\t\t\t\t\t\t<br>\n" +
-                            "\t\t\t\t\t\t\t\t<hr>\n" +
-                            "\t\t\t\t\t\t\t\t<h3>Statistiques sur les vols</h3>\n" +
+                            "\t\t\t\t\t\t\t\t<hr>\n");
+                    if (!tour){
+                        w.println("\t\t\t\t\t\t\t\t<h3>Temps des parties</h3>\n" +
+                                "\t\t\t\t\t\t\t\t<br>\n" +
+                                "\t\t\t\t\t\t\t\t<div id=\"playerTimeChart\" style=\"height:450px;width:1100px\"></div>\n" +
+                                "\t\t\t\t\t\t\t\t<hr>\n");
+                    }
+
+                    w.println("\t\t\t\t\t\t\t\t<h3>Statistiques sur les vols</h3>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t\t<h4>Il y a eu au total " + totalTheftAttempt + " tentatives de vols, dont :</h4>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t\t<div id=\"totalTheftChart\" style=\"height:450px;width:1100px\"></div>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<h4>Nombre de vols par resources</h4>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<div id=\"theftsPerResource\" style=\"height:450px;width:1100px\"></div>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t</div>\n");
                 }
-                else {
+                else { //chaque joueur
                     w.println(  "\t\t\t\t\t\t\t<div class=\"tab-pane\" id=\"player"+i+"\">\n" +
                             "\t\t\t\t\t\t\t\t<h3>Evolution des ressources du joueur " + i + "</h3>\n" +
-                            "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<br>\n");
+                    if (tour){
+                        w.print("\t\t\t\t\t\t\t\t<h4>Mode tour par tour. Nombre de tour : " + playerSteps[i-1] + ".</h4>\n");
+                    }
+                    else {
+                        w.print("\t\t\t\t\t\t\t\t<h4>Durée de la partie : " + playerTime[i-1] + " secondes.</h4>\n");
+                    }
+                    w.println( "\t\t\t\t\t\t\t\t<br>\n" +
+                            "\t\t\t\t\t\t\t\t<h4>Comportement du joueur : " + playerComportement[i-1] + "</h4>\n" +
                             "\t\t\t\t\t\t\t\t<div id=\"playerChart"+i+"\" style=\"height:450px;width:1100px\"></div>\n" +
                             "\t\t\t\t\t\t\t\t<br>\n" +
                             "\t\t\t\t\t\t\t\t<hr>\n" +
@@ -149,7 +183,7 @@ public class HTMLGenerator {
 
             w.println("<!-- PRODUCTEURS -->");
 
-            for (int i = 0 ; i <nbPlayers+1 ; i++){
+            for (int i = 0 ; i <nbProducers+1 ; i++){
                 if (i == 0) {
                     w.println(  "\t\t\t\t\t\t\t<div class=\"tab-pane\" id=\"producer\">\n" +
                             "\t\t\t\t\t\t\t\t<h3>Évolution des ressources totales des producteurs</h3>\n" +
@@ -178,12 +212,19 @@ public class HTMLGenerator {
             w.println(  "\t<script type=\"text/javascript\">\n" +
                             "\t\tgoogle.charts.load('current', {'packages':['corechart']});\n" +
                             "\t\tgoogle.charts.setOnLoadCallback(drawTotalPlayerChart);\n" +
-                            "\t\tgoogle.charts.setOnLoadCallback(drawTotalTheftChart);"
+                            "\t\tgoogle.charts.setOnLoadCallback(drawTotalTheftChart);\n" +
+                            "\t\tgoogle.charts.setOnLoadCallback(drawTheftsResourceChart);\n"
                         /*"\t\tgoogle.charts.setOnLoadCallback(drawTotalProducerChart);\n"*/);
-
+            if (!tour){
+                w.println("\t\tgoogle.charts.setOnLoadCallback(drawPlayerTimeChart);\n");
+            }
             for (int i = 0; i < nbPlayers; i++){
                 w.println("\t\tgoogle.charts.setOnLoadCallback(drawPlayer"+i+"Chart);");
                 w.println("\t\tgoogle.charts.setOnLoadCallback(drawPlayerTheft"+i+"Chart);");
+            }
+
+            for (int i = 0; i < nbProducers; i++){
+                w.println("\t\tgoogle.charts.setOnLoadCallback(drawProducer"+i+"Chart);");
             }
 
             w.println(  "\t\tfunction drawTotalPlayerChart() {\n" +
@@ -193,8 +234,7 @@ public class HTMLGenerator {
                     "\t\t\t\theight:450,\n" +
                     "\t\t\t\twidth:1100,\n" +
                     "\t\t\t\tcurveType: 'function',\n" +
-                    "\t\t\t\tanimation:{ duration: 750, easing: 'out', startup: true},\n" +
-                    "\t\t\t\thAxis: {title: 'temps',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
+                    "\t\t\t\thAxis: {title: 'tours',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
                     "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressources'},\n" +
                     "\t\t\t};\n" +
                     "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('totalPlayerChart'));\n" +
@@ -212,6 +252,32 @@ public class HTMLGenerator {
                     "\t\t\tchart.draw(data, options);\n" +
                     "\t\t}\n");
 
+            if (!tour){
+                w.println(  "\t\tfunction drawPlayerTimeChart() {\n" +
+                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("PlayerTime") + ");\n" +
+                        "\t\t\tvar options = {\n" +
+                        "\t\t\t\ttitle: '',\n" +
+                        "\t\t\t\theight:450,\n" +
+                        "\t\t\t\twidth:1100,\n" +
+                        "\t\t\t\tvAxis: {minValue: 0},\n" +
+                        "\t\t\t};\n" +
+                        "\t\t\tvar chart = new google.visualization.ColumnChart(document.getElementById('playerTimeChart'));\n" +
+                        "\t\t\tchart.draw(data, options);\n" +
+                        "\t\t}\n");
+            }
+
+            w.println(  "\t\tfunction drawTheftsResourceChart() {\n" +
+                    "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("TheftResources") + ");\n" +
+                    "\t\t\tvar options = {\n" +
+                    "\t\t\t\ttitle: '',\n" +
+                    "\t\t\t\theight:450,\n" +
+                    "\t\t\t\twidth:1100,\n" +
+                    "\t\t\t\tvAxis: {minValue: 0},\n" +
+                    "\t\t\t};\n" +
+                    "\t\t\tvar chart = new google.visualization.ColumnChart(document.getElementById('theftsPerResource'));\n" +
+                    "\t\t\tchart.draw(data, options);\n" +
+                    "\t\t}\n");
+
             for (int i = 0; i < nbPlayers; i++){
                 w.println(  "\t\tfunction drawPlayer"+i+"Chart() {\n" +
                         "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("Joueur"+i) + ");\n" +
@@ -219,9 +285,13 @@ public class HTMLGenerator {
                         "\t\t\t\ttitle: '',\n" +
                         "\t\t\t\theight:450,\n" +
                         "\t\t\t\twidth:1100,\n" +
-                        "\t\t\t\tanimation:{ duration: 750, easing: 'out', startup: true},\n" +
-                        "\t\t\t\thAxis: {title: 'temps',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n" +
-                        "\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
+                        "\t\t\t\tcurveType: 'function',\n");
+                if (tour)
+                    w.println("\t\t\t\thAxis: {title: 'tours',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n");
+                else
+                    w.println("\t\t\t\thAxis: {title: 'temps (sec.)',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n");
+
+                w.println("\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
                         "\t\t\t};\n" +
                         "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('playerChart"+(i+1)+"'));\n" +
                         "\t\t\tchart.draw(data, options);\n" +
@@ -235,6 +305,26 @@ public class HTMLGenerator {
                         "\t\t\t\twidth:1100,\n" +
                         "\t\t\t};\n" +
                         "\t\t\tvar chart = new google.visualization.PieChart(document.getElementById('player"+(i+1)+"TheftChart'));\n" +
+                        "\t\t\tchart.draw(data, options);\n" +
+                        "\t\t}\n");
+            }
+
+            for (int i = 0; i < nbProducers; i++){
+                w.println(  "\t\tfunction drawProducer"+i+"Chart() {\n" +
+                        "\t\t\tvar data = google.visualization.arrayToDataTable(" + jsonObject.get("Producer"+i) + ");\n" +
+                        "\t\t\tvar options = {\n" +
+                        "\t\t\t\ttitle: '',\n" +
+                        "\t\t\t\theight:450,\n" +
+                        "\t\t\t\twidth:1100,\n" +
+                        "\t\t\t\tcurveType: 'function',\n");
+                if (tour)
+                    w.println("\t\t\t\thAxis: {title: 'tours',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n");
+                else
+                    w.println("\t\t\t\thAxis: {title: 'temps (sec.)',  titleTextStyle: {color: '#333'}, minValue: 1, gridlines: {color: 'transparent'}},\n");
+
+                w.println("\t\t\t\tvAxis: {minValue: 0, title: 'nombre de ressource'},\n" +
+                        "\t\t\t};\n" +
+                        "\t\t\tvar chart = new google.visualization.LineChart(document.getElementById('producerChart"+(i+1)+"'));\n" +
                         "\t\t\tchart.draw(data, options);\n" +
                         "\t\t}\n");
             }

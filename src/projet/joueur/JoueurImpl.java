@@ -66,6 +66,25 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
             e.printStackTrace();
         }
         this.id = id;
+        try {
+            //writer.write("Joueur " + id + "\n");
+            switch (comportement){
+                case PASSIF:
+                    writer.write("Passif\n");
+                    break;
+                case AGGRESIF:
+                    writer.write("Aggressif\n");
+                    break;
+                case JOUEUR:
+                    writer.write("Joueur\n");
+                    break;
+                case MALIN:
+                    writer.write("Malin\n");
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -149,6 +168,11 @@ public class JoueurImpl extends UnicastRemoteObject implements Joueur {
         this.canSteal = canSteal;
         this.tourParTour = tourParTour;
         this.isEpuisable = isEpuisable;
+        try {
+            writer.write(tourParTour ? "ON\n" : "OFF\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

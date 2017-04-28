@@ -3,10 +3,7 @@ package projet.coordinateur;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -26,61 +23,127 @@ public class JSONConverter {
 
     private int[] playerTheftAttempt;
     private int[] playerTheftSuccess;
+    private double[] playerTime;
+    private int[] playerSteps;
+    private double[] producerTime;
+    private String[] playerComportement;
+    private int[] theftResources;
 
-    //private Map<Integer, String> players;
-    //private Map<Integer, String> producers;
-    private Map<String, Integer> resources;
+    private boolean tour = false;
+
+    private Map<Integer, String> resources;
 
     private File[] logPlayers;
     private File[] logProducers;
 
     JSONObject jsonObjectMain;
 
-    public JSONConverter(int nbPlayers,
-                         int nbProducers,
-                         Map<String, Integer> resources,
+    public JSONConverter(Map<Integer, String> resources,
                          File[] logPlayers,
                          File[] logProducers)
     {
         this.resources = resources;
-
-        this.nbPlayers = nbPlayers;
-        this.nbProducers = nbProducers;
-        this.nbResources = this.resources.size();
-
         this.logPlayers = logPlayers;
         this.logProducers = logProducers;
+
+        this.nbPlayers = this.logPlayers.length;
+        this.nbProducers = this.logProducers.length;
+        this.nbResources = this.resources.size();
+
+
+        playerTheftAttempt = new int[this.nbPlayers];
+        playerTheftSuccess = new int[this.nbPlayers];
+        playerTime = new double[nbPlayers];
+        playerSteps = new int[nbPlayers];
+        playerComportement = new String[nbPlayers];
+        theftResources = new int[nbResources];
+        for (int i = 0 ; i < theftResources.length ; i++)
+            theftResources[i] = 0;
+
+        producerTime = new double[nbProducers];
 
         random = new Random();
 
         jsonObjectMain = new JSONObject();
+
+        try {
+            parsePlayer();
+            parseAllPlayers();
+            parseProducer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(jsonObjectMain);
+
+        HTMLGenerator htmlGenerator = new HTMLGenerator(this);
+    }
+
+    private void parseProducer() throws IOException {
+        for (int i = 0; i < nbProducers; i++) {
+            BufferedReader reader = new BufferedReader(new FileReader(logProducers[i]));
+            String line;
+            String[] words;
+            boolean res = false;
+            int cpt = 0;
+
+            JSONArray jsonMain = new JSONArray();
+            JSONArray json = new JSONArray();
+
+            while ((line = reader.readLine()) != null) {
+                cpt++;
+                words = line.split(" ");
+                int nbRes = (words.length - 2) / 2;
+                if (!res) {
+                    //ajout des resources
+                    json.add("Time");
+                    for (int j = 2; j < words.length; j+=2){
+
+                        json.add(resources.get(Integer.parseInt(words[j])));
+                    }
+                    jsonMain.add(json);
+                    res = true;
+                }
+
+                json = new JSONArray();
+                json.add(cpt);
+                for (int j = 3; j < words.length; j+=2){
+                    json.add(Integer.parseInt(words[j]));
+                }
+                jsonMain.add(json);
+            }
+
+            jsonObjectMain.put("Producer" + i, jsonMain);
+
+            reader.close();
+        }
     }
 
 
     //Constructeur pour les tests
     public JSONConverter()
     {
-
-
         //init map resources
         resources = new HashMap<>();
-        resources.put("or", 0);
-        resources.put("petrol", 1);
-        resources.put("fer", 2);
-        resources.put("bois", 3);
-        resources.put("pierre", 4);
+        resources.put(0, "or");
+        resources.put(1, "petrol");
+        //resources.put("fer", 2);
+        //resources.put("bois", 3);
+        //resources.put("pierre", 4);
 
-        nbPlayers = 5;
-        nbProducers = 3;
+        nbPlayers = 2;
+        nbProducers = 1;
         //nbResources = resources.size();
 
         //init arrays (logs and thefts)
         logPlayers = new File[nbPlayers];
         playerTheftAttempt = new int[nbPlayers];
         playerTheftSuccess = new int[nbPlayers];
+        playerTime = new double[nbPlayers];
+        playerComportement = new String[nbPlayers];
 
         for (int i = 0; i < nbPlayers; i++){
-            logPlayers[i] = new File("playerLog_"+i+".txt");
+            logPlayers[i] = new File("log"+i);
             playerTheftAttempt[i] = 0;
             playerTheftSuccess[i] = 0;
         }
@@ -103,10 +166,12 @@ public class JSONConverter {
 
     public void parsePlayer() throws IOException {
         for (int i = 0; i < nbPlayers; i++) {
-            BufferedReader reader = new BufferedReader(new FileReader("playerLog_"+i+".txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(logPlayers[i]));
+            if (reader == null)
+                System.err.println("Reader " + i + " null");
 
             String line;
-
+            String[] words;
             int cpt = 0;
 
             JSONArray jsonMain = new JSONArray();
@@ -115,41 +180,54 @@ public class JSONConverter {
             //Ajout des titres temps + ressources
             json.add("Time");
             for (int j = 0; j < resources.size(); j++){
-                for (Object o : resources.keySet()) {
-                    if (resources.get(o).equals(j)) {
-                        json.add(o);
-                    }
-                }
-
+                json.add(resources.get(j));
             }
             jsonMain.add(json);
 
             line = reader.readLine();
-            if (!line.equals("Joueur " + i)){
-                System.err.println("Log ne connrespond pas au bon joueur : " + line + " != " + "Joueur " + i);
+            playerComportement[i] = line;
+
+            //TODO tour par tour
+            line = reader.readLine();
+            if (line.equals("ON")){
+                tour = true;
             }
 
             while ((line = reader.readLine()) != null) {
                 json = new JSONArray();
-                String[] words;
 
-                cpt++; //TODO change with timestamp
                 words = line.split(" ");
+                if (tour) {
+                    cpt++; //TODO change with timestamp
+                    playerSteps[i] = cpt;
+                }
+                else {
+                    double t = (Integer.parseInt(words[0]))/1000.;
+                    long factor = (long) Math.pow(10, 1);
+                    t = t * factor;
+                    long tmp = Math.round(t);
+                    playerTime[i] = (double) tmp / factor;
+                }
+
 
                 //Si un vol
                 if (words[1].equals("steal")) {
                     playerTheftAttempt[i]++;
                     //TODO enregistrer la ressources volée
+                    theftResources[Integer.parseInt(words[2])]++;
                     if (Integer.parseInt(words[5]) != -1){
                         playerTheftSuccess[i]++;
                     }
                 }
 
                 //Ajout des ressources dans le json
-                json.add(cpt);
-                for (int j = 6; j < 6 + resources.size() ; j++){
+                if (tour)
+                    json.add(playerSteps[i]);
+                else
+                    json.add(playerTime[i]);
+
+                for (int j = 6; j < 6 + resources.size() ; j++)
                     json.add(Integer.parseInt(words[j]));
-                }
                 jsonMain.add(json);
             }
 
@@ -205,9 +283,9 @@ public class JSONConverter {
         json.add("Time");
         for (int i = 0; i < readers.length; i++){
             line = readers[i].readLine();
-            if (!line.equals("Joueur " + i)){
+            /*if (!line.equals("Joueur " + i)){
                 System.err.println("Log ne connrespond pas au bon joueur : " + line + " != " + "Joueur " + i);
-            }
+            }*/
             json.add("Joueur " + i);
         }
         jsonMain.add(json);
@@ -253,14 +331,63 @@ public class JSONConverter {
         jsonMain.remove(jsonMain.size()-1);
         jsonObjectMain.put("TotalPlayer", jsonMain);
 
+        //vol
+        addTheftToJson();
+
+        //Temps
+        addTimeToJson();
+
+        //vol ressources
+        addResourcesTheft();
+
+        for (int i = 0; i < readers.length; i++){
+            readers[i].close();
+        }
+    }
+
+    private void addResourcesTheft() {
+        JSONArray jsonMain = new JSONArray();
+        JSONArray json = new JSONArray();
+        json.add("Ressources");
+        json.add("Nombre de tentatives de vol");
+        jsonMain.add(json);
+
+        for (int j = 0; j < nbResources; j++){
+            json = new JSONArray();
+            json.add(resources.get(j));
+            json.add(theftResources[j]);
+            jsonMain.add(json);
+        }
+
+        jsonObjectMain.put("TheftResources", jsonMain);
+    }
+
+    private void addTimeToJson() {
+        JSONArray jsonMain = new JSONArray();
+        JSONArray json = new JSONArray();
+        json.add("Joueur");
+        json.add("Temps (sec.)");
+        jsonMain.add(json);
+
+        for (int j = 0; j < nbPlayers; j++){
+            json = new JSONArray();
+            json.add("Joueur " + j + " (" + playerComportement[j] + ")");
+            json.add(playerTime[j]);
+            jsonMain.add(json);
+        }
+
+        jsonObjectMain.put("PlayerTime", jsonMain);
+    }
+
+    private void addTheftToJson(){
         //Vol
         for (int i = 0; i < nbPlayers; i++){
             totalPlayerTheftAttempt += playerTheftAttempt[i];
             totalPlayerTheftSuccess += playerTheftSuccess[i];
         }
-        jsonMain = new JSONArray();
+        JSONArray jsonMain = new JSONArray();
 
-        json = new JSONArray();
+        JSONArray json = new JSONArray();
         json.add("Type de vol");
         json.add("Nombre");
         jsonMain.add(json);
@@ -276,10 +403,6 @@ public class JSONConverter {
         jsonMain.add(json);
 
         jsonObjectMain.put("TotalTheft", jsonMain);
-
-        for (int i = 0; i < readers.length; i++){
-            readers[i].close();
-        }
     }
 
     public int getNbPlayers() {
@@ -310,11 +433,44 @@ public class JSONConverter {
         return playerTheftSuccess;
     }
 
-    public Map<String, Integer> getResources() {
+    public double[] getPlayerTime() {
+        return playerTime;
+    }
+
+    public Map<Integer, String> getResources() {
         return resources;
     }
 
     public JSONObject getJsonObjectMain() {
         return jsonObjectMain;
+    }
+
+    public String[] getPlayerComportement() {
+        return playerComportement;
+    }
+
+    public int[] getPlayerSteps() {
+        return playerSteps;
+    }
+
+    public boolean isTour() {
+        System.err.println(tour);
+        return tour;
+    }
+
+    public double getMaxTime() {
+        double max = 0.;
+        for (double d : playerTime)
+            if (d > max) max = d;
+
+        return max;
+    }
+
+    public double getMaxSteps() {
+        int max = 0;
+        for (int i : playerSteps)
+            if (i > max) max = i;
+
+        return max;
     }
 }

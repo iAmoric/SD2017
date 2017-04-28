@@ -128,6 +128,8 @@ public class EndImpl extends UnicastRemoteObject implements End {
             getFile(logsProducteur[i],producteurs[i]);
         }
         System.err.println("FIN LOGS PRODUCTEUR");
+
+        JSONConverter jsonConverter = new JSONConverter(clefNumeroRessource, logsJoueur, logsProducteur);
     }
 
     /**
