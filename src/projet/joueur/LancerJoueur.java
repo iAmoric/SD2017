@@ -13,6 +13,7 @@ public class LancerJoueur {
     public static void main(String[] args){
         if(args.length != 3){
             System.err.println("usage LancerJoueur portRMI nomService comportement");
+            System.exit(1);
         }
         int portRMI = Integer.parseInt(args[0]);
         String nomService = args[1];

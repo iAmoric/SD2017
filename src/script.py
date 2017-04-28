@@ -30,14 +30,21 @@ for ligne in lignes:
 		ligneSplit = ligne.split("/")
 		print(" ".join(ligneSplit))
 		nomServiceRMI = ligneSplit[3]
-		ipRMI = " ".join(ligneSplit).split(":")[0]
-		portRMI = " ".join(ligneSplit).split(":")[1]
-		#os.system('gnome-terminal --command="./LancerJoueur '+portRMI+' '+nomService+'"');
-		os.system('gnome-terminal')
+		ipRMI = " ".join(ligneSplit).split(":")[1]
+		portRMI = " ".join(ligneSplit).split(":")[2]
+		comportement = ligne.split(" ")[1];
+		string = 'gnome-terminal --command="java projet.joueur.LancerJoueur '+portRMI+' '+nomServiceRMI+' '+comportement+'"'
+		print string
+		os.system(string)
 	elif executeProducteur == 1:
 		ligneSplit = ligne.split("/")
 		print(" ".join(ligneSplit))
-		os.system('gnome-terminal')
+		nomServiceRMI = ligneSplit[3]
+		ipRMI = " ".join(ligneSplit).split(":")[1]
+		portRMI = " ".join(ligneSplit).split(":")[2]
+		string = 'gnome-terminal --command="java projet.producteur.LancerProducteur '+portRMI+' '+nomServiceRMI+'"'
+		print string
+		os.system(string)
 		#os.system('gnome-terminal --command="./LancerProducteur '+portRMI+' '+nomService+'"');
 	elif readingRegle == 1:
 		ligneSplit = ligne.split(" ")

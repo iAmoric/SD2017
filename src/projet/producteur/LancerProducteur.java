@@ -20,8 +20,9 @@ public class LancerProducteur {
      * rmiregistry <No port> & <-- dans le dossier avec les stubs ( .class)
      */
     public static void main(String[] args){
-        if(args.length != 3){
+        if(args.length != 2){
             System.err.println("usage LancerProducteur portRMI nomService");
+            System.exit(1);
         }
         int portRMI = Integer.parseInt(args[0]);
         String nomService = args[1];
