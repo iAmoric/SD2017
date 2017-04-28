@@ -20,12 +20,16 @@ public class LancerProducteur {
      * rmiregistry <No port> & <-- dans le dossier avec les stubs ( .class)
      */
     public static void main(String[] args){
-        int portRMI = 5555;
+        if(args.length != 3){
+            System.err.println("usage LancerProducteur portRMI nomService");
+        }
+        int portRMI = Integer.parseInt(args[0]);
+        String nomService = args[1];
         try
         {
             ProducteurImpl impl = new ProducteurImpl();
             Producteur objLocal = (Producteur)impl;
-            Naming.rebind( "rmi://localhost:"+portRMI+"/ProducteurA" ,objLocal) ;
+            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
             System.out.println("Producteur pret") ;
 
         }

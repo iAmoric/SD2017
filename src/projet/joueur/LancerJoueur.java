@@ -14,19 +14,23 @@ public class LancerJoueur {
         if(args.length != 3){
             System.err.println("usage LancerJoueur portRMI nomService comportement");
         }
-        int portRMI = 5555;
+        int portRMI = Integer.parseInt(args[0]);
+        String nomService = args[1];
+        String comportementString = args[2];
+        Comportement comportement = null;
+        for (Comportement c : Comportement.values()){
+            if(c.getNom().equals(comportementString)){
+                comportement = c;
+            }
+        }
         try
         {
             //TOUR rmi://localhost:5555/TourImpl
             //TODO faire des arguments: hostStarter portStarter
-            JoueurImpl impl = new JoueurImpl(Comportement.MALIN);
+            JoueurImpl impl = new JoueurImpl(comportement);
             Joueur objLocal = (Joueur) impl;
-            JoueurImpl implB = new JoueurImpl(Comportement.AGGRESIF);
-            Naming.rebind( "rmi://localhost:"+portRMI+"/JoueurA" ,objLocal) ;
-            Joueur objLocalB = (Joueur)implB;
-            Naming.rebind("rmi://localhost:"+portRMI+"/JoueurB",objLocalB);
-            System.out.println("Joueur  A et B pret") ;
-            //s'enregistrer chez Starter
+            Naming.rebind( "rmi://localhost:"+portRMI+"/"+nomService ,objLocal) ;
+            System.err.println("Le joueur est enregistré");
         }
         catch (RemoteException re) { System.out.println(re) ; }
         catch (MalformedURLException e) { System.out.println(e) ; } catch (IOException e) {
