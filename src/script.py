@@ -37,10 +37,11 @@ for ligne in lignes:
 	elif executeProducteur == 1:
 		ligneSplit = ligne.split("/")
 		#print(" ".join(ligneSplit))
-		nomServiceRMI = ligneSplit[3]
 		ipRMI = " ".join(ligneSplit).split(":")[1]
-		portRMI = " ".join(ligneSplit).split(":")[2]
-		string = 'gnome-terminal --command="java projet.producteur.LancerProducteur '+portRMI+' '+nomServiceRMI+'"'
+		arguments = " ".join(ligneSplit).split(":")[2].split(" ")
+		while len(arguments) > 2:
+			arguments.pop()
+		string = 'gnome-terminal --command="java projet.producteur.LancerProducteur '+" "+" ".join(arguments)+'"'
 		print string
 		os.system(string)
 		#os.system('gnome-terminal --command="./LancerProducteur '+portRMI+' '+nomService+'"');
