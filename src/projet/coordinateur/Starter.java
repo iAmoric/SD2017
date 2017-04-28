@@ -396,22 +396,20 @@ public class Starter {
     }
 
     public static void main(String[] args){
-        /*if(args.length != 1){
+        if(args.length != 1){
             System.err.println("Usage: Starter fichier");
             System.exit(1);
         }
-        File f = new File(args[0]);*/
         try {
-            Starter s = new Starter("ressource/init");
+            Starter s = new Starter(args[0]);
             s.initJoueurs();
             s.initFin();
             s.initRegle();
             s.startGame();
-            //s.info(System.err);
         } catch (IOException | PException e) {
             e.printStackTrace();
         }
-        JSONConverter jsonConverter = new JSONConverter();
+        //JSONConverter jsonConverter = new JSONConverter();
 
     }
 }

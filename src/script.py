@@ -63,6 +63,9 @@ for ligne in lignes:
 			os.system(string)
 
 
+string = 'gnome-terminal --command="java projet.coordinateur.Starter init"'
+
+
 
 
 
