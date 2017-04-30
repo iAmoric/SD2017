@@ -61,6 +61,7 @@ public class ThreadJoueur extends Thread {
                 System.err.println("PARTIE TERMINEE");
                 break;
             case JOUEUR:
+                System.err.println("Entrez --HELP pour connaitre les commandes");
                 break;
         }
 
@@ -217,8 +218,12 @@ public class ThreadJoueur extends Thread {
                         }
                         System.out.print("\n");
                         break;
+                    case "--HELP":
+                        commandeHelp();
+                        break;
                     default:
                         System.err.println("La commande "+splitCommande[0]+" n'existe pas");
+
                         break;
                 }
             }
@@ -227,14 +232,26 @@ public class ThreadJoueur extends Thread {
         for (int i: ressource.keySet()){
             System.out.print(i+" "+ressource.get(i)+" ");
         }
-        System.out.print("\n");
-        System.out.println("Fin du tour");
+        System.out.print("\n\n");
+        System.out.println("Fin du tour\n\n");
 
         //Détection de fin de partie
         List<Integer> l = new ArrayList<Integer>();
         l = ressourceNonTermine(l,j.getRessources());
         if(l.size() == 0)throw new FinDePartieException();
         return true;
+    }
+
+    private void commandeHelp() {
+        System.err.println("\n\nListe des commandes: ");
+        System.err.println(" PASS\n");
+        System.err.println(" GET idJoueur idRessource quantite\n");
+        System.err.println(" STEAL idJoueur idRessource quantite\n");
+        System.err.println(" WAIT\n");
+
+        System.err.println(" OBSERVE OPTION");
+        System.err.println("  OPTION: ALL, PLAYER idPlayer, PROD idProducteur\n");
+        System.err.println(" INFO\n");
     }
 
     private boolean observeJoueur(String[] splitCommande) {
@@ -271,6 +288,7 @@ public class ThreadJoueur extends Thread {
                     System.out.print(i+" "+ressources.get(i));
                 }
                 System.out.print("\n");
+                return false;
             }else{
                 return false;
             }
@@ -279,8 +297,6 @@ public class ThreadJoueur extends Thread {
         } catch (RemoteException e) {
            return false;
         }
-
-        return true;
     }
 
     private boolean waitJoueur(String[] splitCommande) {

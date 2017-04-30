@@ -166,6 +166,7 @@ public class ProducteurImpl extends UnicastRemoteObject implements Producteur{
      * @throws RemoteException
      */
     public void stopProduction()throws RemoteException{
+        System.err.println("PARTIE TERMINEE");
         thread.stopWorking();
         //System.exit(0);
     }
