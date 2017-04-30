@@ -2,7 +2,8 @@ import os
 import time
 
 
-fichier = open("init","r")
+nomFichier = "init"
+fichier = open(nomFichier,"r")
 contenu = fichier.read()
 lignes = contenu.split("\n")
 ligneSplit = ""
@@ -65,8 +66,10 @@ for ligne in lignes:
 
 
 time.sleep(1)
-string = 'gnome-terminal --command="java projet.coordinateur.Starter init"'
+string = 'gnome-terminal --command="java projet.coordinateur.Starter ' + nomFichier +'"'
+print string
 os.system(string)
+
 
 
 
