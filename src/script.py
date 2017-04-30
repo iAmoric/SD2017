@@ -60,7 +60,7 @@ for ligne in lignes:
 			ligneRMI = ligneSplit[1]
 			ipRMI = ligneRMI.split(":")[1].split("/")[2]
 			arguments = " ".join(ligneRMI.split(":")[2].split("/"))
-			string = 'gnome-terminal --command="java projet.coordinateur.LancerEnd '+arguments+'"'
+			string = 'gnome-terminal --command="java -cp ".:org.json.simple-0.4.jar" projet.coordinateur.LancerEnd '+arguments+'"'
 			print string
 			os.system(string)
 
