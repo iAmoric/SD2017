@@ -603,6 +603,7 @@ public class ThreadJoueur extends Thread {
         int valMAX = -1;
         for(int j = 0;j<producteurs.length;j++){
             ressourceProducteur = producteurs[j].observe();
+            if(ressourceProducteur.keySet().contains(i))
             if(ressourceProducteur.get(i) > valMAX){
                 index = j;
                 valMAX = ressourceProducteur.get(i);
