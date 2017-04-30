@@ -21,8 +21,10 @@ public class EndImpl extends UnicastRemoteObject implements End {
     private Producteur[] producteurs;
     private Joueur[] joueurs;//on utilisera les joueurs pour récupérer les log de la partie
     private boolean[] joueursEnPartie;
+    private boolean[] logJoueurRecupere;
     private File[] logsJoueur;
     private File[] logsProducteur;
+    private Object lock = new Object();
     private Map<Integer,String> clefNumeroRessource;
     protected EndImpl() throws RemoteException {
 
@@ -34,11 +36,13 @@ public class EndImpl extends UnicastRemoteObject implements End {
     public void setJoueurs(String[] rmi) throws RemoteException {
         joueurs = new Joueur[rmi.length];
         joueursEnPartie = new boolean[rmi.length];
+        logJoueurRecupere = new boolean[rmi.length];
         logsJoueur = new File[rmi.length];
         for(int i = 0;i<rmi.length;i++){
             try {
                 joueurs[i] = (Joueur) Naming.lookup(rmi[i]);
                 joueursEnPartie[i] = true;
+                logJoueurRecupere[i] = false;
             } catch (MalformedURLException | NotBoundException e) {
                 e.printStackTrace();
             }
@@ -76,6 +80,10 @@ public class EndImpl extends UnicastRemoteObject implements End {
                 try {
                     logsJoueur[id] = new File("logFinalJoueur"+id);
                     getFile(logsJoueur[id],joueurs[id]);
+                    logJoueurRecupere[id] = true;
+                    synchronized (lock){
+                        lock.notifyAll();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -118,6 +126,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
 
     public void finDePartie() throws IOException {
         int i;
+        boolean sync = true;
         System.err.println("La partie est terminé");
         System.err.println("Récupération log des producteurs");
         for(i = 0;i<producteurs.length;i++){
@@ -128,6 +137,23 @@ public class EndImpl extends UnicastRemoteObject implements End {
             getFile(logsProducteur[i],producteurs[i]);
         }
         System.err.println("FIN LOGS PRODUCTEUR");
+
+        //On vérifie qu'on a recupérer les logs de chaque joueur
+        while(sync){
+            sync = false;
+            for (i = 0;i<joueurs.length;i++){
+                if(!logJoueurRecupere[i]){
+                    sync = true;
+                }
+            }
+            synchronized (lock){
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         JSONConverter jsonConverter = new JSONConverter(clefNumeroRessource, logsJoueur, logsProducteur);
     }
