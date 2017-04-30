@@ -141,14 +141,15 @@ public class EndImpl extends UnicastRemoteObject implements End {
         //On vérifie qu'on a recupérer les logs de chaque joueur
         while(sync){
             sync = false;
-            for (i = 0;i<joueurs.length;i++){
-                if(!logJoueurRecupere[i]){
-                    sync = true;
-                }
-            }
+
             synchronized (lock){
+                for (i = 0;i<joueurs.length;i++){
+                    if(!logJoueurRecupere[i]){
+                        sync = true;
+                    }
+                }
                 try {
-                    lock.wait();
+                    if(sync)lock.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
