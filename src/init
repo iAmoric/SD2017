@@ -1,0 +1,19 @@
+Ressource
+or
+petrol
+Objectif
+50
+50
+Joueurs
+rmi://localhost:5555/JoueurA aggresif
+rmi://localhost:5555/JoueurB malin
+rmi://localhost:5555/JoueurC passif
+Producteurs
+rmi://localhost:5555/ProducteurA or 10 petrol 10
+rmi://localhost:5555/ProducteurB or 10 petrol 10
+Regle
+K 100
+N 3
+STEAL ON
+EPUISABLE ON
+FIN rmi://localhost:5555/EndImpl
