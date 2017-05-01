@@ -136,7 +136,7 @@ public class EndImpl extends UnicastRemoteObject implements End {
             logsProducteur[i] = new File("logFinalProducteur"+i);
             getFile(logsProducteur[i],producteurs[i]);
         }
-        System.err.println("FIN LOGS PRODUCTEUR");
+        System.err.println("Logs des producteurs récupérés");
 
         //On vérifie qu'on a recupérer les logs de chaque joueur
         while(sync){
