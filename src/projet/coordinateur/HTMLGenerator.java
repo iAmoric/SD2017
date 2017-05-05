@@ -26,6 +26,8 @@ public class HTMLGenerator {
     double[] playerTime;
     String[] playerComportement;
 
+    String fileName = "projetSD2017.html";
+
     public HTMLGenerator (JSONConverter jsonConverter) {
         jc = jsonConverter;
 
@@ -41,12 +43,14 @@ public class HTMLGenerator {
         tour = jc.isTour();
 
         createHtmlFile();
+
+        System.err.println("L historique de la partie est disponible dans le fichier " + fileName);
     }
 
     public void createHtmlFile() {
 
         try {
-            PrintWriter w = new PrintWriter("projetSD2017.html", "UTF-8");
+            PrintWriter w = new PrintWriter(fileName, "UTF-8");
 
             w.println(  "<!DOCTYPE html>\n" +
                     "<html lang=\"fr\">\n" +

@@ -74,8 +74,6 @@ public class JSONConverter {
             e.printStackTrace();
         }
 
-        System.out.println(jsonObjectMain);
-
         HTMLGenerator htmlGenerator = new HTMLGenerator(this);
     }
 
@@ -159,17 +157,13 @@ public class JSONConverter {
             e.printStackTrace();
         }
 
-        System.out.println(jsonObjectMain);
-
         HTMLGenerator htmlGenerator = new HTMLGenerator(this);
     }
 
     public void parsePlayer() throws IOException {
         for (int i = 0; i < nbPlayers; i++) {
             BufferedReader reader = new BufferedReader(new FileReader(logPlayers[i]));
-            if (reader == null)
-                System.err.println("Reader " + i + " null");
-
+            
             String line;
             String[] words;
             int cpt = 0;
@@ -454,7 +448,6 @@ public class JSONConverter {
     }
 
     public boolean isTour() {
-        System.err.println(tour);
         return tour;
     }
 
