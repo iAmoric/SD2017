@@ -6,7 +6,7 @@ package projet.joueur;
  */
 public enum Comportement {
     PASSIF("passif"),
-    AGGRESIF("aggresif"),
+    AGGRESIF("agressif"),
     JOUEUR("joueur"),
     MALIN("malin");
     private String nom;

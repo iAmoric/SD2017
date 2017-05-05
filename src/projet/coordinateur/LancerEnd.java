@@ -8,6 +8,8 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 /**
+ * Enregistre le coordinateur de fin de partie
+ * 2 arguments: le port RMI et le nom du service
  * Created by jpabegg on 08/04/17.
  */
 public class LancerEnd {

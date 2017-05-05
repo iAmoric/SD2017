@@ -5,6 +5,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 /**
+ * 2 arguments: le port RMI et le nom du service
  * Created by jpabegg on 19/04/17.
  */
 public class LancerTour {

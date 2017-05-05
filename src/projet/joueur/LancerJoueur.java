@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 /**
  * Launcher pour lancer deux joueurs
+ * 3 arguments: port RMI, le nom du service et le comportement du joueurs
  * Created by jpabegg on 31/03/17.
  */
 public class LancerJoueur {
