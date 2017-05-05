@@ -2,18 +2,19 @@ Ressource
 or
 petrol
 Objectif
-50
-50
+30
+30
 Joueurs
-rmi://localhost:5555/JoueurA aggresif
+rmi://localhost:5555/JoueurA agressif
 rmi://localhost:5555/JoueurB malin
 rmi://localhost:5555/JoueurC passif
 Producteurs
 rmi://localhost:5555/ProducteurA or 10 petrol 10
 rmi://localhost:5555/ProducteurB or 10 petrol 10
 Regle
-K 100
-N 3
+K 3
+N 20
 STEAL ON
 EPUISABLE ON
+TOUR rmi://localhost:5555/Tour
 FIN rmi://localhost:5555/EndImpl
