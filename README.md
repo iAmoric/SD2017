@@ -7,7 +7,7 @@
 
 ## Info sur les fichiers de log:
 
-###Format:
+### Format:
 
     SIGNATURE
     DATE ACTION(un mot clef) ARGUMENTS
@@ -15,7 +15,7 @@
     ...
     fin
 
-###Différentes actions et arguments:
+### Différentes actions et arguments:
 
     prendre Producteur IdRessource QuantiteDemandee QuantiteOptenu QuantiteTotal
 	  voler IdJoueur IdRessource QuantiteDemandee QuantiteOptenu QuantiteTotal
@@ -25,7 +25,7 @@
 	  finantivole
 	  fin
 	
-##TODO LIST:
+## TODO LIST:
 
 [] script Java qui lance l'intégralité du système
 [] faire l'observation du système
@@ -33,14 +33,14 @@
 [] faire la récupération des fichiers log par le coordinateur End
 
 
-##Nouveau format fichier log :
+## Nouveau format fichier log :
 
     nomDuJoueur
     date typeAction
     ...
     date typeAction
 
-###typeAction :
+### typeAction :
 
     get idPro idRes QteDemande QteRecu nbRes1 ... nbResN
     steal idJoueur idRes QteVolee QteObtenue nbRes1 ... nbResN
