@@ -27,10 +27,10 @@
 	
 ## TODO LIST:
 
-[] script Java qui lance l'intégralité du système
-[] faire l'observation du système
-[] améliorer les informations dans les log
-[] faire la récupération des fichiers log par le coordinateur End
+* [ ] script Java qui lance l'intégralité du système
+* [ ] faire l'observation du système
+* [ ] améliorer les informations dans les log
+* [ ] faire la récupération des fichiers log par le coordinateur End
 
 
 ## Nouveau format fichier log :
